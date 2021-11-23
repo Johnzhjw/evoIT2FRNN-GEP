@@ -1,1 +1,0 @@
-nohup sh run_0_FR.sh >> out_run_0_FR.log 2>&1 &
