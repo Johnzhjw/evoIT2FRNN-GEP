@@ -37,11 +37,13 @@ void generate_para_all()
         case EC_SBX_CUR:
         case EC_SBX_RAND:
             generate_CR_current();
+            generate_CRall_evo();
             break;
         case SI_PSO:
         case SI_QPSO:
             generate_para_PSO();
             generate_CR_current();
+            generate_CRall_evo();
             break;
         default:
             printf("%s: Unknown strct_ctrl_para.optimizer_type, exiting...\n", AT);
@@ -96,11 +98,13 @@ void update_para_statistics()
         case EC_SBX_CUR:
         case EC_SBX_RAND:
             update_CR_mu_JADE();
+            update_CR_mu_evo();
             break;
         case SI_PSO:
         case SI_QPSO:
             update_para_mu_PSO();
             update_CR_mu_JADE();
+            update_CR_mu_evo();
             break;
         default:
             printf("%s: Unknown strct_ctrl_para.optimizer_type, exiting...\n", AT);
@@ -294,19 +298,19 @@ void generate_F_current()
             if(flip_r((float)st_DE_p.slctProb_SaNSDE_F)) {
                 st_DE_p.tag_SaNSDE_F[iP] = 1;
                 do {
-                    st_DE_p.F__cur[iP] = gaussrand(st_DE_p.F_mu_JADE, 0.3);
+                    st_DE_p.F__cur[iP] = gaussrand(st_DE_p.F_mu, 0.3);
                 } while(st_DE_p.F__cur[iP] <= 0.0);
             } else {
                 st_DE_p.tag_SaNSDE_F[iP] = 2;
                 do {
-                    st_DE_p.F__cur[iP] = cauchyrand(st_DE_p.F_mu_JADE, 0.1);
+                    st_DE_p.F__cur[iP] = cauchyrand(st_DE_p.F_mu, 0.1);
                 } while(st_DE_p.F__cur[iP] <= 0.0);
             }
             if(st_DE_p.F__cur[iP] >= 1.0) st_DE_p.F__cur[iP] = 1.0;
             break;
         case DE_F_JADE:
             do {
-                st_DE_p.F__cur[iP] = cauchyrand(st_DE_p.F_mu_JADE, 0.1);
+                st_DE_p.F__cur[iP] = cauchyrand(st_DE_p.F_mu, 0.1);
             } while(st_DE_p.F__cur[iP] <= 0.0);
             if(st_ctrl_p.F_para_limit_tag == FLAG_ON) {
                 if(st_DE_p.F__cur[iP] > 1.0) st_DE_p.F__cur[iP] = 1.0;
@@ -420,7 +424,7 @@ void update_F_mu_JADE()
         //double m_tmp = m;
         //if(fabs(m_tmp - m) > 0.0)
         //    printf("%e", m_tmp - m);
-        st_DE_p.F_mu_JADE = (1.0 - c) * st_DE_p.F_mu_JADE + c * m;
+        st_DE_p.F_mu = (1.0 - c) * st_DE_p.F_mu + c * m;
         //if((strct_global_paras.generation >= 0 && strct_global_paras.generation <= 2) && 3 == strct_MPI_info.mpi_rank) {
         //    fprintf(strct_global_paras.debugFpt, "m with Addr %d gen -> %d.2.101 rank -> %d\n", &m, strct_global_paras.generation, strct_MPI_info.mpi_rank);
         //    save_double(strct_global_paras.debugFpt, &m, 1, 1, 1);
@@ -428,7 +432,7 @@ void update_F_mu_JADE()
         if(0 == st_MPI_p.mpi_rank_master_subPop_globalScope) {
             //printf("F_mu = %lf\n", F_mu);
         }
-        if(isnan(st_DE_p.F_mu_JADE)) {
+        if(isnan(st_DE_p.F_mu)) {
             printf("%s: update_F_mu_JADE error - isnan, maybe divided by ZERO, exiting...\n", AT);
             MPI_Abort(MPI_COMM_WORLD, MY_ERROR_NAN);
         }
@@ -480,7 +484,7 @@ void update_CR_mu_evo()
     int i;
     for(i = 0; i < st_global_p.nPop; i++)
         if(st_DE_p.Sflag[i] &&
-           st_ctrl_p.type_xor_evo_fs == XOR_FS_ADAP)
+           st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
             count++;
 
     if(count) {
@@ -490,13 +494,13 @@ void update_CR_mu_evo()
         double sum2 = 0.0;
         for(i = 0; i < st_global_p.nPop; i++) {
             if(st_DE_p.Sflag[i] &&
-               st_ctrl_p.type_xor_evo_fs == XOR_FS_ADAP) {
-                sum1 += st_DE_p.CRall_evo[i];
+               st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP) {
+                sum1 += st_DE_p.CR_evo_cur[i];
                 sum2++;
             }
         }
         m = sum1 / sum2;
-        st_DE_p.CR_mu_evo = (1.0 - c) * st_DE_p.CR_mu_evo + c * m;
+        st_DE_p.CR_evo_mu = (1.0 - c) * st_DE_p.CR_evo_mu + c * m;
         if(0 == st_MPI_p.mpi_rank_master_subPop_globalScope) {
             //printf("strct_apap_DE_para.CR_mu_evo = %lf\n", strct_apap_DE_para.CR_mu_evo);
         }
@@ -513,9 +517,9 @@ void generate_CRall_evo()
 {
     int i;
     for(i = 0; i < st_global_p.nPop; i++) {
-        st_DE_p.CRall_evo[i] = gaussrand(st_DE_p.CR_mu_evo, 0.1);
-        if(st_DE_p.CRall_evo[i] < 0.0) st_DE_p.CRall_evo[i] = 0.0;
-        if(st_DE_p.CRall_evo[i] > 1.0) st_DE_p.CRall_evo[i] = 1.0;
+        st_DE_p.CR_evo_cur[i] = gaussrand(st_DE_p.CR_evo_mu, 0.1);
+        if(st_DE_p.CR_evo_cur[i] < 0.0) st_DE_p.CR_evo_cur[i] = 0.0;
+        if(st_DE_p.CR_evo_cur[i] > 1.0) st_DE_p.CR_evo_cur[i] = 1.0;
     }
 
     return;
@@ -526,21 +530,21 @@ void generate_para_PSO()
     int i;
     for(i = 0; i < st_global_p.nPop; i++) {
         do {
-            st_PSO_p.w[i] = cauchyrand(st_PSO_p.w_mu, 0.1);
-        } while(st_PSO_p.w[i] <= st_PSO_p.w_min);
-        if(st_PSO_p.w[i] > st_PSO_p.w_max) st_PSO_p.w[i] = st_PSO_p.w_max;
+            st_PSO_p.w__cur[i] = cauchyrand(st_PSO_p.w_mu, 0.1);
+        } while(st_PSO_p.w__cur[i] <= st_PSO_p.w_min);
+        if(st_PSO_p.w__cur[i] > st_PSO_p.w_max) st_PSO_p.w__cur[i] = st_PSO_p.w_max;
     }
     for(i = 0; i < st_global_p.nPop; i++) {
         do {
-            st_PSO_p.c1[i] = cauchyrand(st_PSO_p.c1_mu, 0.1);
-        } while(st_PSO_p.c1[i] <= st_PSO_p.c1_min);
-        if(st_PSO_p.c1[i] > st_PSO_p.c1_max) st_PSO_p.c1[i] = st_PSO_p.c1_max;
+            st_PSO_p.c1_cur[i] = cauchyrand(st_PSO_p.c1_mu, 0.1);
+        } while(st_PSO_p.c1_cur[i] <= st_PSO_p.c1_min);
+        if(st_PSO_p.c1_cur[i] > st_PSO_p.c1_max) st_PSO_p.c1_cur[i] = st_PSO_p.c1_max;
     }
     for(i = 0; i < st_global_p.nPop; i++) {
         do {
-            st_PSO_p.c2[i] = cauchyrand(st_PSO_p.c2_mu, 0.1);
-        } while(st_PSO_p.c2[i] <= st_PSO_p.c2_min);
-        if(st_PSO_p.c2[i] > st_PSO_p.c2_max) st_PSO_p.c2[i] = st_PSO_p.c2_max;
+            st_PSO_p.c2_cur[i] = cauchyrand(st_PSO_p.c2_mu, 0.1);
+        } while(st_PSO_p.c2_cur[i] <= st_PSO_p.c2_min);
+        if(st_PSO_p.c2_cur[i] > st_PSO_p.c2_max) st_PSO_p.c2_cur[i] = st_PSO_p.c2_max;
     }
 
     return;
@@ -571,12 +575,12 @@ void update_para_mu_PSO()
                (st_optimizer_p.optimizer_types_all[i] == SI_PSO ||
                 st_optimizer_p.optimizer_types_all[i] == SI_QPSO) &&
                st_optimizer_p.PSO_para_types_all[i] == PSO_PARA_ADAP) {
-                sum1_w += st_PSO_p.w[i] * st_PSO_p.w[i];
-                sum2_w += st_PSO_p.w[i];
-                sum1_c1 += st_PSO_p.c1[i] * st_PSO_p.c1[i];
-                sum2_c1 += st_PSO_p.c1[i];
-                sum1_c2 += st_PSO_p.c2[i] * st_PSO_p.c2[i];
-                sum2_c2 += st_PSO_p.c2[i];
+                sum1_w += st_PSO_p.w__cur[i] * st_PSO_p.w__cur[i];
+                sum2_w += st_PSO_p.w__cur[i];
+                sum1_c1 += st_PSO_p.c1_cur[i] * st_PSO_p.c1_cur[i];
+                sum2_c1 += st_PSO_p.c1_cur[i];
+                sum1_c2 += st_PSO_p.c2_cur[i] * st_PSO_p.c2_cur[i];
+                sum2_c2 += st_PSO_p.c2_cur[i];
             }
         }
         m = sum1_w / sum2_w;

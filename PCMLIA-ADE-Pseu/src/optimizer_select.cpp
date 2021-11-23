@@ -81,8 +81,8 @@ void gen_offspring_selected_one(int iS, int iD, int* tmp_indx)
             else if(tmp_type == SI_PSO) count_selection = 1;
             else if(tmp_type == SI_QPSO) count_selection = 2;
             else {
-                printf("%s: Rank-%d: Unknown optimizer type, exiting...\n",
-                       AT, mpi_rank);
+                printf("%s: Rank-%d: Unknown optimizer type - optimizer_types_all[%d] = %d, exiting...\n",
+                       AT, mpi_rank, iD, tmp_type);
                 MPI_Abort(MPI_COMM_WORLD, MY_ERROR_OPTIMIZER_TYPE);
             }
         }
@@ -169,9 +169,9 @@ void gen_offspring_selected_one(int iS, int iD, int* tmp_indx)
            mixed_var_types_tag == FLAG_ON ||
            (mixed_var_types_tag == FLAG_OFF && type_var_encoding == VAR_DOUBLE)) {
             if(tmp_type == EC_SBX_CUR)
-                SBX_classic(pCurrent, pRef, pCurrent, pTrail);
+                SBX_classic(pCurrent, pRef, pCurrent, pTrail, iP, iD);
             else if(tmp_type == EC_SBX_RAND)
-                SBX_classic(p_vec[0], pRef, pCurrent, pTrail);
+                SBX_classic(p_vec[0], pRef, pCurrent, pTrail, iP, iD);
             else if(tmp_type == EC_DE_CUR_1 || tmp_type == EC_DE_ARCHIVE)
                 DE_selected1_1_exp(pCurrent, p_vec[1], p_vec[0], pRef, pCurrent, pTrail, iP, iD);
             else if(tmp_type == EC_DE_CUR_2)
@@ -206,9 +206,9 @@ void gen_offspring_selected_one(int iS, int iD, int* tmp_indx)
            mixed_var_types_tag == FLAG_ON ||
            (mixed_var_types_tag == FLAG_OFF && type_var_encoding == VAR_DOUBLE)) {
             if(tmp_type == EC_SBX_CUR)
-                SBX_classic(pCurrent, p_vec[0], pCurrent, pTrail);
+                SBX_classic(pCurrent, p_vec[0], pCurrent, pTrail, iP, iD);
             else if(tmp_type == EC_SBX_RAND)
-                SBX_classic(p_vec[0], p_vec[1], pCurrent, pTrail);
+                SBX_classic(p_vec[0], p_vec[1], pCurrent, pTrail, iP, iD);
             else if(tmp_type == EC_DE_CUR_1 || tmp_type == EC_DE_ARCHIVE)
                 DE_1_exp(pCurrent, p_vec[1], p_vec[0], pCurrent, pTrail, iP, iD);
             else if(tmp_type == EC_DE_CUR_2)
@@ -395,9 +395,9 @@ void gen_offspring_allObjs_local_ND()
                mixed_var_types_tag == FLAG_ON ||
                (mixed_var_types_tag == FLAG_OFF && type_var_encoding == VAR_DOUBLE)) {
                 if(tmp_type == EC_SBX_CUR)
-                    SBX_classic(pCurrent, p_vec1[0], pCurrent, pTrail);
+                    SBX_classic(pCurrent, p_vec1[0], pCurrent, pTrail, iP, count);
                 else if(tmp_type == EC_SBX_RAND)
-                    SBX_classic(p_vec1[0], p_vec1[1], pCurrent, pTrail);
+                    SBX_classic(p_vec1[0], p_vec1[1], pCurrent, pTrail, iP, count);
                 else if(tmp_type == EC_DE_CUR_1 || tmp_type == EC_DE_ARCHIVE)
                     DE_1_exp(pCurrent, p_vec2[1], p_vec2[0], pCurrent, pTrail, iP, count);
                 else if(tmp_type == EC_DE_RAND_1 || tmp_type == EC_DE_ARCHIVE_RAND)
@@ -523,44 +523,72 @@ void gen_offspring_allObjs_global_ND()
         for(int i = 0; i < 2; i++) r_vec1[i] = r_vec2[i] = -1;
         for(int i = 0; i < 2; i++) p_vec1[i] = p_vec2[i] = NULL;
         int* tmp_ind_vec = (int*)malloc(nArch * 10 * sizeof(int));
-        int tmp_count = 0;
-        //
-        if(num_selected >= 3) {
-            //selectSamples_clone_RR(strct_global_paras.num_selected, strct_global_paras.cloneNum, iNic, -1, -1, &rb, &r0, NULL);
-            for(int iInd = 0; iInd < num_selected; iInd++) {
-                if(iInd == iNic) continue;
-                if(selectedIndv[iInd] == iCur) continue;
-                tmp_ind_vec[tmp_count++] = selectedIndv[iInd];
+        if(st_ctrl_p.type_clone_evo == CLONE_EVO_GLOBAL) {
+            int tmp_count = 0;
+            //
+            if(num_selected >= 3) {
+                //selectSamples_clone_RR(strct_global_paras.num_selected, strct_global_paras.cloneNum, iNic, -1, -1, &rb, &r0, NULL);
+                for(int iInd = 0; iInd < num_selected; iInd++) {
+                    if(iInd == iNic) continue;
+                    if(selectedIndv[iInd] == iCur) continue;
+                    tmp_ind_vec[tmp_count++] = selectedIndv[iInd];
+                }
+            } else {
+                //selectSamples(strct_archive_info.nArch, iCur, -1, -1, &rb, &r0, NULL, NULL, NULL);
+                for(int iInd = 0; iInd < nArch; iInd++) {
+                    if(iInd == iCur) continue;
+                    tmp_ind_vec[tmp_count++] = iInd;
+                }
             }
-        } else {
-            //selectSamples(strct_archive_info.nArch, iCur, -1, -1, &rb, &r0, NULL, NULL, NULL);
+            rand_selection(tmp_ind_vec, tmp_count, r_vec1, count_selection1);
+            //pb = &strct_archive_info.var_archive[rb * strct_global_paras.nDim];
+            //p0 = &strct_archive_info.var_archive[r0 * strct_global_paras.nDim];
+            for(int iInd = 0; iInd < count_selection1; iInd++) {
+                p_vec1[iInd] = &arc_var[r_vec1[iInd] * nDim];
+            }
+            //selectSamples(strct_archive_info.nArch, iCur, rb, r0, &r1, NULL, NULL, NULL, NULL);
+            tmp_count = 0;
+            for(int iInd = 0; iInd < nArch; iInd++) {
+                if(iInd == iCur) continue;
+                int tmp_flag = 0;
+                for(int jInd = 0; jInd < count_selection1; jInd++) {
+                    if(r_vec1[jInd] == iInd)
+                        tmp_flag = 1;
+                }
+                if(tmp_flag) continue;
+                tmp_ind_vec[tmp_count++] = iInd;
+            }
+            rand_selection(tmp_ind_vec, tmp_count, r_vec2, count_selection2);
+            //p1 = &strct_archive_info.var_archive[r1 * strct_global_paras.nDim];
+            for(int iInd = 0; iInd < count_selection2; iInd++) {
+                p_vec2[iInd] = &arc_var[r_vec2[iInd] * nDim];
+            }
+        } else { // st_ctrl_p.type_clone_evo == CLONE_EVO_NONE
+            int tmp_count = 0;
+            //
             for(int iInd = 0; iInd < nArch; iInd++) {
                 if(iInd == iCur) continue;
                 tmp_ind_vec[tmp_count++] = iInd;
             }
-        }
-        rand_selection(tmp_ind_vec, tmp_count, r_vec1, count_selection1);
-        //pb = &strct_archive_info.var_archive[rb * strct_global_paras.nDim];
-        //p0 = &strct_archive_info.var_archive[r0 * strct_global_paras.nDim];
-        for(int iInd = 0; iInd < count_selection1; iInd++) {
-            p_vec1[iInd] = &arc_var[r_vec1[iInd] * nDim];
-        }
-        //selectSamples(strct_archive_info.nArch, iCur, rb, r0, &r1, NULL, NULL, NULL, NULL);
-        tmp_count = 0;
-        for(int iInd = 0; iInd < nArch; iInd++) {
-            if(iInd == iCur) continue;
-            int tmp_flag = 0;
-            for(int jInd = 0; jInd < count_selection1; jInd++) {
-                if(r_vec1[jInd] == iInd)
-                    tmp_flag = 1;
+            tour_selection_ND(tmp_ind_vec, tmp_count, r_vec1, count_selection1, 1);
+            for(int iInd = 0; iInd < count_selection1; iInd++) {
+                p_vec1[iInd] = &arc_var[r_vec1[iInd] * nDim];
             }
-            if(tmp_flag) continue;
-            tmp_ind_vec[tmp_count++] = iInd;
-        }
-        rand_selection(tmp_ind_vec, tmp_count, r_vec2, count_selection2);
-        //p1 = &strct_archive_info.var_archive[r1 * strct_global_paras.nDim];
-        for(int iInd = 0; iInd < count_selection2; iInd++) {
-            p_vec2[iInd] = &arc_var[r_vec2[iInd] * nDim];
+            tmp_count = 0;
+            for(int iInd = 0; iInd < nArch; iInd++) {
+                if(iInd == iCur) continue;
+                int tmp_flag = 0;
+                for(int jInd = 0; jInd < count_selection1; jInd++) {
+                    if(r_vec1[jInd] == iInd)
+                        tmp_flag = 1;
+                }
+                if(tmp_flag) continue;
+                tmp_ind_vec[tmp_count++] = iInd;
+            }
+            tour_selection_ND(tmp_ind_vec, tmp_count, r_vec2, count_selection2, 1);
+            for(int iInd = 0; iInd < count_selection2; iInd++) {
+                p_vec2[iInd] = &arc_var[r_vec2[iInd] * nDim];
+            }
         }
         if(tmp_type == EC_DE_ARCHIVE ||
            tmp_type == EC_DE_ARCHIVE_RAND) {
@@ -575,9 +603,9 @@ void gen_offspring_allObjs_global_ND()
            mixed_var_types_tag == FLAG_ON ||
            (mixed_var_types_tag == FLAG_OFF && type_var_encoding == VAR_DOUBLE)) {
             if(tmp_type == EC_SBX_CUR)
-                SBX_classic(pCurrent, p_vec1[0], pCurrent, pTrail);
+                SBX_classic(pCurrent, p_vec1[0], pCurrent, pTrail, iP, iP);
             else if(tmp_type == EC_SBX_RAND)
-                SBX_classic(p_vec1[0], p_vec1[1], pCurrent, pTrail);
+                SBX_classic(p_vec1[0], p_vec1[1], pCurrent, pTrail, iP, iP);
             else if(tmp_type == EC_DE_CUR_1 || tmp_type == EC_DE_ARCHIVE)
                 DE_1_exp(pCurrent, p_vec2[1], p_vec2[0], pCurrent, pTrail, iP, iP);
             else if(tmp_type == EC_DE_RAND_1 || tmp_type == EC_DE_ARCHIVE_RAND)
@@ -744,9 +772,9 @@ void gen_offspring_subObj_ND()
            mixed_var_types_tag == FLAG_ON ||
            (mixed_var_types_tag == FLAG_OFF && type_var_encoding == VAR_DOUBLE)) {
             if(tmp_type == EC_SBX_CUR)
-                SBX_classic(pCurrent, p0, pCurrent, pTrail);
+                SBX_classic(pCurrent, p0, pCurrent, pTrail, iP, iP);
             else if(tmp_type == EC_SBX_RAND)
-                SBX_classic(pb, p0, pCurrent, pTrail);
+                SBX_classic(pb, p0, pCurrent, pTrail, iP, iP);
             else if(tmp_type == EC_DE_CUR_1 || tmp_type == EC_DE_ARCHIVE)
                 DE_selected1_1_exp(pCurrent, p_vec2[1], p_vec2[0], pb, pCurrent, pTrail, iP, iP);
             else if(tmp_type == EC_DE_RAND_1 || tmp_type == EC_DE_ARCHIVE_RAND)

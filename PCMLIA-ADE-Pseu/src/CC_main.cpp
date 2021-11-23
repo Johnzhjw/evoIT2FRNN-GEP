@@ -106,18 +106,21 @@ void cooperativeCoevolution(int algoMechType)
         }
     }
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == 0) printf("cooperativeCoevolution() initialized. \n");
 #endif
     //////////////////////////////////////////////////////////////////////////
     generate_para_all();
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == 0) printf("generate_para_all(); \n");
 #endif
     //////////////////////////////////////////////////////////////////////////
     localAssignGroup(color_pop, (*cur_grp_index));
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == 0) printf("localAssignGroup(); \n");
 #endif
@@ -126,12 +129,14 @@ void cooperativeCoevolution(int algoMechType)
     if(CLONALG_tag == FLAG_OFF) {
         mainLoop_CC();
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("mainLoop_CC(); \n");
 #endif
     } else {
         mainLoop_CC_CLONALG();
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("mainLoop_CC_CLONALG(); \n");
 #endif
@@ -216,11 +221,13 @@ void mainLoop_CC()
             j = selectedIndv[i];
             gen_offspring_selected_one(j, i, ind_sub);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("gen_offspring_selected_one(); \n");
 #endif
             joinVar(j, i, optimization_tag);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("joinVar(); \n");
 #endif
@@ -238,17 +245,20 @@ void mainLoop_CC()
                                     rot_angle_offspring,
                                     niche, niche_local, tableNeighbor, tableNeighbor_local, maxNneighb, parent_type[i]);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("update_population_DECOM(); \n");
 #endif
         }
         update_xBest(UPDATE_GIVEN, (*num_selected), NULL, osp_var, osp_obj, rot_angle_offspring);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("update_xBest(); \n");
 #endif
         update_xBest_history(UPDATE_GIVEN, (*num_selected), NULL, osp_var, osp_obj, rot_angle_offspring);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("update_xBest_history(); \n");
 #endif
@@ -266,7 +276,17 @@ void mainLoop_CC()
             for(i = 0; i < (*num_selected); i++) {
                 j = selectedIndv[i];
                 gen_offspring_selected_one(j, i, ind_sub);
+#ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
+                MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+                if(st_MPI_p.mpi_rank == 0) printf("gen_offspring_selected_one(%d, %d, ind_sub); \n", j, i);
+#endif
                 joinVar(j, i, optimization_tag);
+#ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
+                MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+                if(st_MPI_p.mpi_rank == 0) printf("joinVar(%d, %d, optimization_tag); \n", j, i);
+#endif
             }
         }
         scatter_evaluation_gather();
@@ -947,11 +967,7 @@ void mainLoop_subObj_ND()
 
     if(st_MPI_p.color_master_subPop) {
         //////////////////////////////////////////////////////////////////////////
-        if(st_ctrl_p.type_clone_evo == CLONE_EVO_LOCAL) {
-            gen_offspring_subObj_ND();
-        } else {
-            gen_offspring_subObj_ND();
-        }
+        gen_offspring_subObj_ND();
         //MPI_Barrier(strct_MPI_info.comm_master_species_populationScope);
         //if (strct_MPI_info.mpi_rank_master_species_populationScope == 0)printf("LINE ND sep 1.1\n");
         //////////////////////////////////////////////////////////////////////////
@@ -972,6 +988,10 @@ void mainLoop_subObj_ND()
         memcpy(st_repo_p.obj, st_archive_p.obj, st_archive_p.nArch_sub * st_global_p.nObj * sizeof(double));
         memcpy(st_repo_p.F, st_DE_p.F__archive, st_archive_p.nArch_sub * sizeof(double));
         memcpy(st_repo_p.CR, st_DE_p.CR_archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_repo_p.CR_evo, st_DE_p.CR_evo_arc, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_repo_p.w, st_PSO_p.w__archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_repo_p.c1, st_PSO_p.c1_archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_repo_p.c2, st_PSO_p.c2_archive, st_archive_p.nArch_sub * sizeof(double));
         st_repo_p.nRep = st_archive_p.nArch_sub;
         memcpy(&st_repo_p.var[st_repo_p.nRep * st_global_p.nDim], st_pop_evo_offspring.var,
                st_archive_p.nArch_sub * st_global_p.nDim * sizeof(double));
@@ -979,11 +999,19 @@ void mainLoop_subObj_ND()
                st_archive_p.nArch_sub * st_global_p.nObj * sizeof(double));
         memcpy(&st_repo_p.F[st_repo_p.nRep], st_DE_p.F__cur, st_archive_p.nArch_sub * sizeof(double));
         memcpy(&st_repo_p.CR[st_repo_p.nRep], st_DE_p.CR_cur, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(&st_repo_p.CR_evo[st_repo_p.nRep], st_DE_p.CR_evo_cur, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(&st_repo_p.w[st_repo_p.nRep], st_PSO_p.w__cur, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(&st_repo_p.c1[st_repo_p.nRep], st_PSO_p.c1_cur, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(&st_repo_p.c2[st_repo_p.nRep], st_PSO_p.c2_cur, st_archive_p.nArch_sub * sizeof(double));
         st_repo_p.nRep += st_archive_p.nArch_sub;
         refineRepository_generateArchive_sub();
         //
         memcpy(st_DE_p.F__cur, st_DE_p.F__archive, st_archive_p.nArch_sub * sizeof(double));
         memcpy(st_DE_p.CR_cur, st_DE_p.CR_archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_DE_p.CR_evo_cur, st_DE_p.CR_evo_arc, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_PSO_p.w__cur, st_PSO_p.w__archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_PSO_p.c1_cur, st_PSO_p.c1_archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_PSO_p.c2_cur, st_PSO_p.c2_archive, st_archive_p.nArch_sub * sizeof(double));
 
         //if((strct_global_paras.generation >= 0 && strct_global_paras.generation <= 0) && 5 == strct_MPI_info.mpi_rank) {
         //    for(i = 0; i < strct_global_paras.nPop; i++)
@@ -1041,6 +1069,10 @@ void mainLoop_allObjs_ND()
         memcpy(st_repo_p.obj, st_archive_p.obj, st_archive_p.nArch * st_global_p.nObj * sizeof(double));
         memcpy(st_repo_p.F, st_DE_p.F__archive, st_archive_p.nArch * sizeof(double));
         memcpy(st_repo_p.CR, st_DE_p.CR_archive, st_archive_p.nArch * sizeof(double));
+        memcpy(st_repo_p.CR_evo, st_DE_p.CR_evo_arc, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_repo_p.w, st_PSO_p.w__archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_repo_p.c1, st_PSO_p.c1_archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_repo_p.c2, st_PSO_p.c2_archive, st_archive_p.nArch_sub * sizeof(double));
         st_repo_p.nRep = st_archive_p.nArch;
         memcpy(&st_repo_p.var[st_repo_p.nRep * st_global_p.nDim], st_pop_evo_offspring.var,
                st_archive_p.nArch * st_global_p.nDim * sizeof(double));
@@ -1048,11 +1080,19 @@ void mainLoop_allObjs_ND()
                st_archive_p.nArch * st_global_p.nObj * sizeof(double));
         memcpy(&st_repo_p.F[st_repo_p.nRep], st_DE_p.F__cur, st_archive_p.nArch * sizeof(double));
         memcpy(&st_repo_p.CR[st_repo_p.nRep], st_DE_p.CR_cur, st_archive_p.nArch * sizeof(double));
+        memcpy(&st_repo_p.CR_evo[st_repo_p.nRep], st_DE_p.CR_evo_cur, st_archive_p.nArch * sizeof(double));
+        memcpy(&st_repo_p.w[st_repo_p.nRep], st_PSO_p.w__cur, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(&st_repo_p.c1[st_repo_p.nRep], st_PSO_p.c1_cur, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(&st_repo_p.c2[st_repo_p.nRep], st_PSO_p.c2_cur, st_archive_p.nArch_sub * sizeof(double));
         st_repo_p.nRep += st_archive_p.nArch;
         refineRepository_generateArchive();
         //
         memcpy(st_DE_p.F__cur, st_DE_p.F__archive, st_archive_p.nArch * sizeof(double));
         memcpy(st_DE_p.CR_cur, st_DE_p.CR_archive, st_archive_p.nArch * sizeof(double));
+        memcpy(st_DE_p.CR_evo_cur, st_DE_p.CR_evo_arc, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_PSO_p.w__cur, st_PSO_p.w__archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_PSO_p.c1_cur, st_PSO_p.c1_archive, st_archive_p.nArch_sub * sizeof(double));
+        memcpy(st_PSO_p.c2_cur, st_PSO_p.c2_archive, st_archive_p.nArch_sub * sizeof(double));
     }
 
     return;

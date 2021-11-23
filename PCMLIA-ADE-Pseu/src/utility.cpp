@@ -11,6 +11,10 @@ void copyToArchiveFromRepository(int iA, int iR)
     st_archive_p.indx[iA] = iR;
     st_DE_p.F__archive[iA] = st_repo_p.F[iR];
     st_DE_p.CR_archive[iA] = st_repo_p.CR[iR];
+    st_DE_p.CR_evo_arc[iA] = st_repo_p.CR_evo[iR];
+    st_PSO_p.w__archive[iA] = st_repo_p.w[iR];
+    st_PSO_p.c1_archive[iA] = st_repo_p.c1[iR];
+    st_PSO_p.c2_archive[iA] = st_repo_p.c2[iR];
     st_repo_p.flag[iR] = iA;
 
     return;

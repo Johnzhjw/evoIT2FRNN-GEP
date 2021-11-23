@@ -39,6 +39,7 @@
 #include "MOP_Classify_CFRNN.h"
 #include "MOP_EdgeComputation.h"
 #include "MOP_Predict_FRNN.h"
+#include "MOP_Mobile_Sink.h"
 
 //////////////////////////////////////////////////////////////////////////
 

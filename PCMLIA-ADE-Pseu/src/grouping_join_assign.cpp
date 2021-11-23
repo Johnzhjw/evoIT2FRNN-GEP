@@ -229,7 +229,7 @@ void grouping_variables()
     return;
 }
 
-void grouping_variables_rand_unif(int numGrps)
+void grouping_variables_unif(int numGrps, int flag_rand)
 {
     st_grp_ana_p.numDiverIndexes = 0;
     st_grp_ana_p.numConverIndexes = 0;
@@ -250,7 +250,8 @@ void grouping_variables_rand_unif(int numGrps)
             for(int i = 0; i < st_global_p.nDim; i++) {
                 st_grp_info_p.Groups[iObj * st_global_p.nDim + i] = i;
             }
-            shuffle(&st_grp_info_p.Groups[iObj * st_global_p.nDim], st_global_p.nDim);
+            if(flag_rand)
+                shuffle(&st_grp_info_p.Groups[iObj * st_global_p.nDim], st_global_p.nDim);
 
             st_grp_info_p.Groups_sizes[iObj] = tmp_num;
 
@@ -266,14 +267,14 @@ void grouping_variables_rand_unif(int numGrps)
                         st_grp_info_p.Groups_sub_disps[tmp_ind - 1];
                 }
                 //sort
-                for(int a = 0; a < st_grp_info_p.Groups_sub_sizes[tmp_ind]; a++) {
-                    for(int b = 0; b < st_grp_info_p.Groups_sub_sizes[tmp_ind]; b++) {
+                for(int a = st_grp_info_p.Groups_sub_sizes[tmp_ind] - 1; a > 0; a--) {
+                    for(int b = 0; b < a; b++) {
                         int tmp_offset = iObj * st_global_p.nDim +
                                          st_grp_info_p.Groups_sub_disps[tmp_ind];
-                        if(st_grp_info_p.Groups[tmp_offset + a] > st_grp_info_p.Groups[tmp_offset + b]) {
-                            int tmp = st_grp_info_p.Groups[tmp_offset + a];
-                            st_grp_info_p.Groups[tmp_offset + a] = st_grp_info_p.Groups[tmp_offset + b];
-                            st_grp_info_p.Groups[tmp_offset + b] = tmp;
+                        if(st_grp_info_p.Groups[tmp_offset + b] > st_grp_info_p.Groups[tmp_offset + b + 1]) {
+                            int tmp = st_grp_info_p.Groups[tmp_offset + b];
+                            st_grp_info_p.Groups[tmp_offset + b] = st_grp_info_p.Groups[tmp_offset + b + 1];
+                            st_grp_info_p.Groups[tmp_offset + b + 1] = tmp;
                         }
                     }
                 }
@@ -2004,7 +2005,7 @@ void grouping_variables_EVO5_FRNN()
     return;
 }
 
-void grouping_variables_EVO_FRNN_Predict()
+void grouping_variables_EVO_FRNN(int* xType)
 {
     st_grp_ana_p.numDiverIndexes = 0;
     st_grp_ana_p.numConverIndexes = 0;
@@ -2014,8 +2015,6 @@ void grouping_variables_EVO_FRNN_Predict()
     }
 
     int tmp_nGroup = 2;
-
-    int tmp_offset = NDIM_Classify_CFRNN;
 
     MPI_Barrier(MPI_COMM_WORLD);
     if(0 == st_MPI_p.mpi_rank) {
@@ -2039,12 +2038,12 @@ void grouping_variables_EVO_FRNN_Predict()
                 //
                 for(int i = 0; i < st_global_p.nDim; i++) {
                     int tmp_flag = 0;
-                    if(frnn_MOP_Predict->xType[i] == VAR_TYPE_CONTINUOUS) {
+                    if(xType[i] == VAR_TYPE_CONTINUOUS) {
                         if(iNum == 0) {
                             tmp_flag = 1;
                         }
-                    } else if(frnn_MOP_Predict->xType[i] == VAR_TYPE_DISCRETE ||
-                              frnn_MOP_Predict->xType[i] == VAR_TYPE_BINARY) {
+                    } else if(xType[i] == VAR_TYPE_DISCRETE ||
+                              xType[i] == VAR_TYPE_BINARY) {
                         if(iNum == 1) {
                             tmp_flag = 1;
                         }

@@ -55,11 +55,12 @@ typedef enum {
     FLAG_ON
 } ENUM_GLOBAL_SWITCH_TAG;
 typedef enum {
-    OPT_DEFAULT,
-    OPT_DE,
-    OPT_PSO,
-    OPT_SBX
-} ENUM_OPT_TAG;
+    SCALE_NONE,
+    SCALE_QUANTUM,
+    SCALE_LEVY,
+    SCALE_CAUCHY,
+    SCALE_GAUSS
+} ENUM_SCALE_PARA;
 typedef enum {
     LOCALIZATION,
     DECOMPOSITION,
@@ -135,7 +136,8 @@ typedef enum {
 } ENUM_PREFER_WHICH_OBJ_TAG;
 typedef enum {
     CLONE_EVO_LOCAL,
-    CLONE_EVO_GLOBAL
+    CLONE_EVO_GLOBAL,
+    CLONE_EVO_NONE
 } ENUM_Clone_evo_type;
 typedef enum {
     COMP_GREATER,
@@ -231,7 +233,8 @@ typedef enum {
     MY_TYPE_ACTIVITY_DETECTION_CLASSIFY,
     MY_TYPE_RecSys_SmartCity,
     MY_TYPE_EVO_CNN,
-    MY_TYPE_EVO_CFRNN
+    MY_TYPE_EVO_CFRNN,
+    MY_TYPE_EVO_MOBILE_SINK
 } ENUM_Problem_type;
 typedef enum {
     GROUPING_TYPE_CLASSIFY_NORMAL,
@@ -275,9 +278,9 @@ typedef enum {
     MUTATION_FEATURE_MARKOV
 } ENUM_FEATURE_MUTATION_TYPE;
 typedef enum {
-    XOR_FS_FIX,
-    XOR_FS_ADAP
-} ENUM_XOR_EVO_FS;
+    XOR_EVO_MUT_FIX,
+    XOR_EVO_MUT_ADAP
+} ENUM_XOR_EVO_MUT;
 //#define EVOLUTION_FEATURE_MARKOV
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
@@ -372,7 +375,16 @@ typedef struct STRCT_CONTROL_PARA {
     //
     int MFI_update_tag;
     int CLONALG_tag = FLAG_ON;
-    int QuantumPara_tag;
+    int ScalePara_tag;
+    typedef struct STRCT_SCALEPARA_PARA {
+        double levy_c = 0.1;
+        double levy_a = 0.1;
+        double cauchy_a = 0;
+        double cauchy_b = 1;
+        double gauss_a = 0;
+        double gauss_b = 1;
+    } STRCT_scalepara_para;
+    STRCT_scalepara_para st_scale_para;
     int Qubits_angle_opt_tag;
     int F_para_limit_tag;
     int weight_evo_tag;
@@ -409,7 +421,7 @@ typedef struct STRCT_CONTROL_PARA {
     int type_test_type_FS;
     int type_var_encoding;
     int type_feature_adjust;
-    int type_xor_evo_fs;
+    int type_xor_evo_mut;
     int tag_gather_after_evaluate;
     int flag_check_more_update_DECOM;
     //
@@ -576,6 +588,8 @@ typedef struct STRCT_GROUPING_INFO_VALS {
     int minGroupSize = 111;
     int maxGroupSize;
     int limitDiverIndex;
+    //
+    int flag_predefined;
 } STRCT_grouping_info_vals;
 extern STRCT_grouping_info_vals st_grp_info_p;
 //------------------------------------------------------------//
@@ -712,9 +726,9 @@ typedef struct STRCT_PSO_PARA_ALL {
     double* velocity;
     double* vMax;
     double* vMin;
-    double* w;
-    double* c1;
-    double* c2;
+    double* w__cur, *w__archive;
+    double* c1_cur, *c1_archive;
+    double* c2_cur, *c2_archive;
     double  tt1, tt2;
     int*    indNeighbor;
     double  w_mu = 0.729;
@@ -769,6 +783,10 @@ typedef struct STRCT_REPOSITORY_INFO {
     double* dens;
     double* F;
     double* CR;
+    double* CR_evo;
+    double* w;
+    double* c1;
+    double* c2;
     int* tag;
     int* flag;
     //
@@ -779,7 +797,7 @@ extern STRCT_repository_info st_repo_p;
 //adaptive DE
 typedef struct STRCT_ADAPTIVE_DE_PARA {
     double* F__cur;
-    double* CR_cur;
+    double* CR_cur, *CR_evo_cur;
     int ns_JADE_F, nf_JADE_F;
     int ns_JADE_CR, nf_JADE_CR;
     int ns_SHADE, nf_SHADE;
@@ -796,17 +814,12 @@ typedef struct STRCT_ADAPTIVE_DE_PARA {
     int nHistSHADE = 50;
     int iHistSHADE;
     double* F_hist, *CR_hist;
-    double* Fall_SHADE, *CRall_SHADE;
-    double* Fall_JADE, *CRall_JADE, *CRall_evo;
-    double* Fall_jDE, *CRall_jDE;
-    double* Fall_NSDE, *CRall_NSDE;
-    double* Fall_SaNSDE, *CRall_SaNSDE;
     int Fcount, CRcount;
     int* Sflag;
-    double F_mu_JADE, CR_mu, CR_mu_evo;
-    double F_mu_arch, CR_mu_arch;
+    double F_mu, CR_mu, CR_evo_mu;
+    double F_mu_arch, CR_mu_arch, CR_evo_mu_arch;
     double c_para;
-    double* F__archive, *CR_archive;
+    double* F__archive, *CR_archive, *CR_evo_arc;
     int candid_num;
     double* candid_F;
     double* candid_CR;
@@ -1009,12 +1022,12 @@ void grouping_variables_EVO2_FRNN();
 void grouping_variables_EVO3_FRNN();
 void grouping_variables_EVO4_FRNN();
 void grouping_variables_EVO5_FRNN();
-void grouping_variables_EVO_FRNN_Predict();
+void grouping_variables_EVO_FRNN(int* xType);
 void grouping_variables_IntrusionDetection_Classify();
 void grouping_variables_ActivityDetection_Classify();
 void grouping_variables_evoCNN();
 void grouping_variables_evoCFRNN();
-void grouping_variables_rand_unif(int numGrps);
+void grouping_variables_unif(int numGrps, int flag_rand);
 void grouping_variables_classify_random();
 void grouping_variables_classify_cluster_kmeans();
 void grouping_variables_classify_cluster_spectral();
@@ -1094,7 +1107,7 @@ void DE_selected2_1_exp(double* pbase, double* p1, double* p2, double* pb1, doub
                         int iPara);
 void EA_pure_xor(double* p1, double* p2, double* parent, double* child, int iP, int iPara);
 void evo_bin_commonality(double* p0, double* p1, double* parent, double* child, int iP);
-void SBX_classic(double* p1, double* p2, double* parent, double* child);
+void SBX_classic(double* p1, double* p2, double* parent, double* child, int iP, int iPara);
 void PSO_classic(double* p1, double* parent, double* child, double* vel, int iP, int iPara);
 void QPSO_classic_2(double* p1, double* p_center, double* parent, double* child, double* vel, int iP, int iPara);
 void Quantum_transform_update(double* parent, double* child, double* rot, int iP);
@@ -1260,6 +1273,7 @@ void show_indicator_vars_simp(int finalTag);
 void show_para_A();
 void show_para_B();
 void show_para_Prob();
+void show_DeBug_info();
 //------------------------------------------------------------------------------------------------------------
 //  utility_save.cpp
 void save_double(FILE* fpt, double* pTarget, int num, int dim, int tag);

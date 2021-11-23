@@ -11,13 +11,29 @@ void DE_1_bin(double* pbase, double* p1, double* p2, double* parent, double* chi
 
     double F_dyn;
     double CR_dyn;
-
     F_dyn = st_DE_p.F__cur[iPara];
-
-    if(st_ctrl_p.type_xor_evo_fs == XOR_FS_ADAP)
-        CR_dyn = st_DE_p.CRall_evo[iP];
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
     else
         CR_dyn = st_DE_p.CR;
+
+    //
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
+        double tmp_rnd = pointer_gen_rand();
+        while(tmp_rnd == 0.0) {
+            tmp_rnd = pointer_gen_rand();
+        }
+        if(flip_r((float)0.5))
+            F_dyn *= log(1.0 / tmp_rnd);
+        else
+            F_dyn *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        F_dyn *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        F_dyn *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        F_dyn *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
+    }
 
     k_ind = rnd(0, size_g - 1);
     int real_ind;
@@ -50,11 +66,15 @@ void DE_1_exp(double* pbase, double* p1, double* p2, double* parent, double* chi
     int size_g = st_grp_info_p.table_mine_size;
 
     double F_dyn;
-
+    double CR_dyn;
     F_dyn = st_DE_p.F__cur[iPara];
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
 
     //
-    if(st_ctrl_p.QuantumPara_tag == FLAG_ON) {
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
         double tmp_rnd = pointer_gen_rand();
         while(tmp_rnd == 0.0) {
             tmp_rnd = pointer_gen_rand();
@@ -63,6 +83,12 @@ void DE_1_exp(double* pbase, double* p1, double* p2, double* parent, double* chi
             F_dyn *= log(1.0 / tmp_rnd);
         else
             F_dyn *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        F_dyn *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        F_dyn *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        F_dyn *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
     }
 
     k_ind = rnd(0, size_g - 1);
@@ -74,7 +100,7 @@ void DE_1_exp(double* pbase, double* p1, double* p2, double* parent, double* chi
            st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
             continue;
         }
-        if(flip_r((float)st_DE_p.CR) || k == k_ind) {
+        if(flip_r((float)CR_dyn) || k == k_ind) {
             child[real_ind] = pbase[real_ind] +
                               F_dyn * (p1[real_ind] - p2[real_ind]);
             if(st_ctrl_p.Qubits_angle_opt_tag == FLAG_OFF)
@@ -97,11 +123,15 @@ void DE_2_exp(double* pbase, double* p1, double* p2, double* p3, double* p4, dou
     int size_g = st_grp_info_p.table_mine_size;
 
     double F_dyn;
-
+    double CR_dyn;
     F_dyn = st_DE_p.F__cur[iPara];
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
 
     //
-    if(st_ctrl_p.QuantumPara_tag == FLAG_ON) {
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
         double tmp_rnd = pointer_gen_rand();
         while(tmp_rnd == 0.0) {
             tmp_rnd = pointer_gen_rand();
@@ -110,6 +140,12 @@ void DE_2_exp(double* pbase, double* p1, double* p2, double* p3, double* p4, dou
             F_dyn *= log(1.0 / tmp_rnd);
         else
             F_dyn *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        F_dyn *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        F_dyn *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        F_dyn *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
     }
 
     k_ind = rnd(0, size_g - 1);
@@ -121,7 +157,7 @@ void DE_2_exp(double* pbase, double* p1, double* p2, double* p3, double* p4, dou
            st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
             continue;
         }
-        if(flip_r((float)st_DE_p.CR) || k == k_ind) {
+        if(flip_r((float)CR_dyn) || k == k_ind) {
             child[real_ind] = pbase[real_ind] +
                               F_dyn * (p1[real_ind] - p2[real_ind]) +
                               F_dyn * (p3[real_ind] - p4[real_ind]);
@@ -145,23 +181,15 @@ void DE_selected1_1_exp(double* pbase, double* p1, double* p2, double* pb, doubl
     int g_size = st_grp_info_p.table_mine_size;
 
     double F_dyn;
-    /*	F_dyn=cauchyrand(F_mu,0.1);
-    S_F[iP]=F_dyn;
-
-    if(flip_r(t1))
-    {
-    F_dyn=rndreal(0.1,0.9);
-    S_F[iP]=F_dyn;
-    }
-    else
-    {
-    F_dyn=S_F[iP];
-    }*/
-
+    double CR_dyn;
     F_dyn = st_DE_p.F__cur[iPara];
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
 
     //
-    if(st_ctrl_p.QuantumPara_tag == FLAG_ON) {
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
         double tmp_rnd = pointer_gen_rand();
         while(tmp_rnd == 0.0) {
             tmp_rnd = pointer_gen_rand();
@@ -170,6 +198,12 @@ void DE_selected1_1_exp(double* pbase, double* p1, double* p2, double* pb, doubl
             F_dyn *= log(1.0 / tmp_rnd);
         else
             F_dyn *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        F_dyn *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        F_dyn *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        F_dyn *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
     }
     /*	if(strct_utility_info.utility[iP]<strct_utility_info.utility_mid1)
     {
@@ -208,7 +242,7 @@ void DE_selected1_1_exp(double* pbase, double* p1, double* p2, double* pb, doubl
            st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
             continue;
         }
-        if(flip_r((float)st_DE_p.CR) || k == k_ind) {
+        if(flip_r((float)CR_dyn) || k == k_ind) {
             //			F_dyn=0.5*fabs(LevyRand(0.7,0.36))+0.5*gaussMap();
             child[real_ind] = pbase[real_ind] +
                               F_dyn * (pb[real_ind] - pbase[real_ind]) +
@@ -240,11 +274,15 @@ void DE_selected1_2_exp(double* pbase, double* p1, double* p2, double* p3, doubl
     int g_size = st_grp_info_p.table_mine_size;
 
     double F_dyn;
-
+    double CR_dyn;
     F_dyn = st_DE_p.F__cur[iPara];
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
 
     //
-    if(st_ctrl_p.QuantumPara_tag == FLAG_ON) {
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
         double tmp_rnd = pointer_gen_rand();
         while(tmp_rnd == 0.0) {
             tmp_rnd = pointer_gen_rand();
@@ -253,6 +291,12 @@ void DE_selected1_2_exp(double* pbase, double* p1, double* p2, double* p3, doubl
             F_dyn *= log(1.0 / tmp_rnd);
         else
             F_dyn *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        F_dyn *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        F_dyn *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        F_dyn *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
     }
 
     k_ind = rnd(0, g_size - 1);
@@ -264,7 +308,7 @@ void DE_selected1_2_exp(double* pbase, double* p1, double* p2, double* p3, doubl
            st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
             continue;
         }
-        if(flip_r((float)st_DE_p.CR) || k == k_ind) {
+        if(flip_r((float)CR_dyn) || k == k_ind) {
             child[real_ind] = pbase[real_ind] +
                               F_dyn * (pb[real_ind] - pbase[real_ind]) +
                               F_dyn * (p1[real_ind] - p2[real_ind]) +
@@ -290,11 +334,15 @@ void DE_selected2_1_exp(double* pbase, double* p1, double* p2, double* pb1, doub
     int g_size = st_grp_info_p.table_mine_size;
 
     double F_dyn;
-
+    double CR_dyn;
     F_dyn = st_DE_p.F__cur[iPara];
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
 
     //
-    if(st_ctrl_p.QuantumPara_tag == FLAG_ON) {
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
         double tmp_rnd = pointer_gen_rand();
         while(tmp_rnd == 0.0) {
             tmp_rnd = pointer_gen_rand();
@@ -303,6 +351,12 @@ void DE_selected2_1_exp(double* pbase, double* p1, double* p2, double* pb1, doub
             F_dyn *= log(1.0 / tmp_rnd);
         else
             F_dyn *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        F_dyn *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        F_dyn *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        F_dyn *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
     }
 
     k_ind = rnd(0, g_size - 1);
@@ -314,7 +368,7 @@ void DE_selected2_1_exp(double* pbase, double* p1, double* p2, double* pb1, doub
            st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
             continue;
         }
-        if(flip_r((float)st_DE_p.CR) || k == k_ind) {
+        if(flip_r((float)CR_dyn) || k == k_ind) {
             child[real_ind] = pbase[real_ind] +
                               F_dyn * (pb1[real_ind] - pbase[real_ind]) +
                               F_dyn * (pb2[real_ind] - pbase[real_ind]) +
@@ -343,8 +397,8 @@ void EA_pure_xor(double* p1, double* p2, double* parent, double* child, int iP, 
 
     //F_dyn = strct_apap_DE_para.F_cur[iPara];
 
-    if(st_ctrl_p.type_xor_evo_fs == XOR_FS_ADAP)
-        CR_dyn = st_DE_p.CRall_evo[iP];
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
     else
         CR_dyn = st_DE_p.CR;
 
@@ -418,7 +472,7 @@ void evo_bin_commonality(double* p0, double* p1, double* parent, double* child, 
     return;
 }
 
-void SBX_classic(double* p1, double* p2, double* parent, double* child)
+void SBX_classic(double* p1, double* p2, double* parent, double* child, int iP, int iPara)
 {
     double rand;
     double y1, y2, yl, yu;
@@ -427,6 +481,12 @@ void SBX_classic(double* p1, double* p2, double* parent, double* child)
     double eta_c = etax;
     int i_ind;
     int size_g = st_grp_info_p.table_mine_size;
+
+    double CR_dyn;
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
 
     i_ind = rnd(0, size_g - 1);
     int real_ind;
@@ -438,7 +498,7 @@ void SBX_classic(double* p1, double* p2, double* parent, double* child)
                st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
                 continue;
             }
-            if(flip_r((float)st_DE_p.CR) || i == i_ind) {
+            if(flip_r((float)CR_dyn) || i == i_ind) {
                 if(fabs(p1[real_ind] - p2[real_ind]) > EPS) {
                     if(p1[real_ind] < p2[real_ind]) {
                         y1 = p1[real_ind];
@@ -504,6 +564,12 @@ void PSO_classic(double* p1, double* parent, double* child, double* vel, int iP,
     int k_ind;
     int size_g = st_grp_info_p.table_mine_size;
 
+    double CR_dyn;
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
+
     double cur_w = st_PSO_p.w_fixed;
     double cur_c1 = st_PSO_p.c1_fixed;
     double cur_c2 = st_PSO_p.c2_fixed;
@@ -512,13 +578,13 @@ void PSO_classic(double* p1, double* parent, double* child, double* vel, int iP,
         cur_c1 = st_PSO_p.c1_fixed;
         cur_c2 = st_PSO_p.c2_fixed;
     } else if(st_optimizer_p.PSO_para_types_all[iP] == PSO_PARA_ADAP) {
-        cur_w = st_PSO_p.w[iPara];
-        cur_c1 = st_PSO_p.c1[iPara];
-        cur_c2 = st_PSO_p.c2[iPara];
+        cur_w = st_PSO_p.w__cur[iPara];
+        cur_c1 = st_PSO_p.c1_cur[iPara];
+        cur_c2 = st_PSO_p.c2_cur[iPara];
     }
 
     //
-    if(st_ctrl_p.QuantumPara_tag == FLAG_ON) {
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
         double tmp_rnd = pointer_gen_rand();
         while(tmp_rnd == 0.0) {
             tmp_rnd = pointer_gen_rand();
@@ -543,6 +609,18 @@ void PSO_classic(double* p1, double* parent, double* child, double* vel, int iP,
             cur_c2 *= log(1.0 / tmp_rnd);
         else
             cur_c2 *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        cur_w *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+        cur_c1 *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+        cur_c2 *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        cur_w *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+        cur_c1 *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+        cur_c2 *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        cur_w *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
+        cur_c1 *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
+        cur_c2 *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
     }
 
     k_ind = rnd(0, size_g - 1);
@@ -554,7 +632,7 @@ void PSO_classic(double* p1, double* parent, double* child, double* vel, int iP,
            st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
             continue;
         }
-        if(flip_r((float)st_DE_p.CR) || k == k_ind) {
+        if(flip_r((float)CR_dyn) || k == k_ind) {
             vel[real_ind] = cur_w * vel[real_ind] +
                             cur_c1 * pointer_gen_rand() * (parent[real_ind] - child[real_ind]) +
                             cur_c2 * pointer_gen_rand() * (p1[real_ind] - child[real_ind]);
@@ -582,6 +660,12 @@ void QPSO_classic_2(double* p1, double* p_center, double* parent, double* child,
     int k_ind;
     int size_g = st_grp_info_p.table_mine_size;
 
+    double CR_dyn;
+    if(st_ctrl_p.type_xor_evo_mut == XOR_EVO_MUT_ADAP)
+        CR_dyn = st_DE_p.CR_evo_cur[iPara];
+    else
+        CR_dyn = st_DE_p.CR;
+
     //double cur_w = strct_PSO_para_all.w_fixed_PSO;
     //double cur_c1 = strct_PSO_para_all.c1_fixed_PSO;
     //double cur_c2 = strct_PSO_para_all.c2_fixed_PSO;
@@ -601,7 +685,8 @@ void QPSO_classic_2(double* p1, double* p_center, double* parent, double* child,
                            1.0);
 
     //
-    {
+    //
+    if(st_ctrl_p.ScalePara_tag == SCALE_QUANTUM) {
         double tmp_rnd = pointer_gen_rand();
         while(tmp_rnd == 0.0) {
             tmp_rnd = pointer_gen_rand();
@@ -610,6 +695,12 @@ void QPSO_classic_2(double* p1, double* p_center, double* parent, double* child,
             cur_w *= log(1.0 / tmp_rnd);
         else
             cur_w *= -log(1.0 / tmp_rnd);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_LEVY) {
+        cur_w *= LevyRand(st_ctrl_p.st_scale_para.levy_c, st_ctrl_p.st_scale_para.levy_a);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_CAUCHY) {
+        cur_w *= cauchyrand(st_ctrl_p.st_scale_para.cauchy_a, st_ctrl_p.st_scale_para.cauchy_b);
+    } else if(st_ctrl_p.ScalePara_tag == SCALE_GAUSS) {
+        cur_w *= gaussrand(st_ctrl_p.st_scale_para.gauss_a, st_ctrl_p.st_scale_para.gauss_b);
     }
 
     k_ind = rnd(0, size_g - 1);
@@ -621,7 +712,7 @@ void QPSO_classic_2(double* p1, double* p_center, double* parent, double* child,
            st_ctrl_p.types_var_all[real_ind] == VAR_BINARY) {
             continue;
         }
-        if(flip_r((float)st_DE_p.CR) || k == k_ind) {
+        if(flip_r((float)CR_dyn) || k == k_ind) {
             double tmp_rnd = pointer_gen_rand();
             double tmp_val = tmp_rnd * parent[real_ind] + (1.0 - tmp_rnd) * p1[real_ind];
             //double tmp_dif = child[real_ind] - p_center[real_ind];

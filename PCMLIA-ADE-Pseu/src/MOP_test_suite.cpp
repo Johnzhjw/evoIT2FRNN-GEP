@@ -168,6 +168,10 @@ void EMO_initialization(char* pro, int& nobj, int& ndim, int curN, int numN, int
         Initialize_data_EdgeComputation(curN, numN);
         ndim = NDIM_EdgeComputation;
         nobj = NOBJ_EdgeComputation;
+    } else if(strstr(pro, "evoMobileSink")) {
+        Initialize_MOP_Mob_Sink(pro, curN, numN, my_rank);
+        ndim = NDIM_MOP_Mob_Sink;
+        nobj = NOBJ_MOP_Mob_Sink;
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -540,6 +544,10 @@ void EMO_initialization(char* pro, int& nobj, int& ndim, int curN, int numN, int
         pointer_SetLimits = SetLimits_EdgeComputation;
         pointer_CheckLimits = CheckLimits_EdgeComputation;
         pointer_Fitness = Fitness_EdgeComputation;
+    } else if(strstr(pro, "evoMobileSink")) {
+        pointer_SetLimits = SetLimits_MOP_Mob_Sink;
+        pointer_CheckLimits = CheckLimits_MOP_Mob_Sink;
+        pointer_Fitness = Fitness_MOP_Mob_Sink;
     }
     //////////////////////////////////////////////////////////////////////////
     else {
@@ -601,6 +609,8 @@ void EMO_finalization(char* pro)
               !strncmp(pro, "evoBDFGRNN_Predict_", 19) ||
               !strncmp(pro, "evoBGFGRNN_Predict_", 19)) {
         Finalize_MOP_Predict_FRNN();
+    } else if(strstr(pro, "evoMobileSink")) {
+        Finalize_MOP_Mob_Sink();
     }
 
     pointer_InitPara = NULL;
@@ -659,257 +669,294 @@ void EMO_evaluate_problems(char* pro, double* xreal, double* obj, int dim, int n
 
 //#define READ_PS_FILE
 //#define PRINT_STATISTICS_MOP_Predict_FRNN
-////#define TAG_UPDATE_testInstance_txt
-//
-//int main(int argc, char** argv)
-//{
-//    int mpi_rank;
-//    int mpi_size;
-//    char my_name[1024];
-//    int name_len;
-//
-//    MPI_Init(&argc, &argv);
-//    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-//    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-//    MPI_Get_processor_name(my_name, &name_len);
-//
-//    int fun_start_num =
-//        390;
-//    304; // the start number of test function, you can find the explanation in testInstance.txt
-//    int fun_end_num =
-//        397;
-//    304; // the end number of test function
-//#ifdef TAG_UPDATE_testInstance_txt
-//    fun_start_num = 1;
-//    fun_end_num = 397;
-//#endif
-//    int num_run = 20;         // the number of running test instrct_grp_ana_vals.Dependently
-//    int iRun;
-//
-//    int seq;
-//    char prob[256];
-//    int ndim;
-//    int nobj;
-//    int para_1 = 0;
-//    int para_2 = 0;
-//    int para_3 = 0;
-//
-//    char tmp_str[1024];
-//    FILE* readf = fopen("testInstance.txt", "r");
-//#ifdef TAG_UPDATE_testInstance_txt
-//    FILE* wrtef = fopen("testInst.txt", "w");
-//#endif
-//    int iPro;
-//    for(iPro = 1; iPro < fun_start_num; iPro++) {
-//        if(!fgets(tmp_str, sizeof(tmp_str), readf)) {
-//            if(mpi_rank == 0)
-//                printf("%s(%d): Reading file error - no more line, exiting...\n", __FILE__, __LINE__);
-//            exit(-1);
-//        }
-//    }
-//    for(iPro = fun_start_num; iPro <= fun_end_num; iPro++) {
-//        int nb;
-//        if(fgets(tmp_str, sizeof(tmp_str), readf)) {
-//            nb = sscanf(tmp_str, "%d %s %d %d %d %d %d", &seq, prob, &ndim, &nobj, &para_1, &para_2, &para_3);
-//            if(nb < 4) {
-//                if(mpi_rank == 0)
-//                    printf("%s(%d): Reading file error - no more para, exiting...\n", __FILE__, __LINE__);
-//                exit(-2);
-//            }
-//        } else {
-//            if(mpi_rank == 0)
-//                printf("%s(%d): Reading file error - no more line, exiting...\n", __FILE__, __LINE__);
-//            exit(-1);
-//        }
-//
-//#ifdef TAG_UPDATE_testInstance_txt
-//        if(nb == 4)
-//            fprintf(wrtef, "%d\t%s\t%d\t%d\n", iPro, prob, ndim, nobj);
-//        else
-//            fprintf(wrtef, "%d\t%s\t%d\t%d\t%d\t%d\t%d\n", iPro, prob, ndim, nobj, para_1, para_2, para_3);
-//        continue;
-//#endif
-//
-//        if(strstr(prob, "Predict_Stock_")) {
-//            num_run = 1;
-//        }
-//
-//        for(iRun = 1; iRun <= num_run; iRun++) {
-//            //if (mpi_rank + 1 != iRun) continue;
-//
-//            int curR = -1;
-//            int numR = -1;
-//            int curT = -1;
-//            int curI = -1;
-//            int curD = -1;
-//#ifdef READ_PS_FILE
-//            char tmp_fn[1024];
-//            if(strstr(prob, "evoFRNN_Predict_Stock_0941")) {
-//                curR = 7;
-//                numR = 10;
-//                curT = 21;
-//                curI = 9;
-//                curD = 1281;
-//            } else if(strstr(prob, "evoDFRNN_Predict_Stock_0941")) {
-//                curR = 5;
-//                numR = 10;
-//                curT = 6;
-//                curI = 1;
-//                curD = 1281;
-//            } else if (strstr(prob, "evoFGRNN_Predict_Stock_0941")) {
-//                curR = 1;
-//                numR = 10;
-//                curT = 4;
-//                curI = 5;
-//                curD = 2131;
-//            } else if (strstr(prob, "evoDFGRNN_Predict_Stock_0941")) {
-//                curR = 2;
-//                numR = 10;
-//                curT = 11;
-//                curI = 7;
-//                curD = 2131;
-//            } else if (strstr(prob, "evoBFRNN_Predict_Stock_0941")) {
-//                curR = 8;
-//                numR = 10;
-//                curT = 21;
-//                curI = 2;
-//                curD = 2436;
-//            } else if (strstr(prob, "evoBDFRNN_Predict_Stock_0941")) {
-//                curR = 9;
-//                numR = 10;
-//                curT = 6;
-//                curI = 5;
-//                curD = 2436;
-//            } else if (strstr(prob, "evoBFGRNN_Predict_Stock_0941")) {
-//                curR = 10;
-//                numR = 10;
-//                curT = 4;
-//                curI = 3;
-//                curD = 3286;
-//            } else if (strstr(prob, "evoBDFGRNN_Predict_Stock_0941")) {
-//                curR = 10;
-//                numR = 10;
-//                curT = 4;
-//                curI = 3;
-//                curD = 3286;
-//            }
-//            EMO_initialization(prob, nobj, ndim, curR - 1, numR, mpi_rank, para_1, para_2, para_3);
-//            curD = ndim;
-//            sprintf(tmp_fn,
-//                "/WORK/hebut_bincao2_1/JohnZhao/summary/Trans_NN/EXPs/PC-Pseu/PS/trace/DPCCMOLSIA_FUN_%s_OBJ3_VAR%d_MPI96_RUN%d_key%d", prob, curD, curR, curT);
-//            FILE* fpt = fopen(tmp_fn, "r");
-//            if (!fpt) {
-//                printf("%s(%d): Open file error ! Exiting ...\n", __FILE__, __LINE__);
-//                exit(-1375);
-//            }
-//#else
-//            EMO_initialization(prob, nobj, ndim, iRun - 1, 1, mpi_rank, para_1, para_2, para_3);
-//#endif
-//
-//            printf("\n--   run %d   --\n\n\n-- PROBLEM %s\n--  variables: %d\n--  objectives: %d\n\n",
-//                   iRun, prob, ndim, nobj);
-//
-//            double* individual = (double*)calloc(ndim, sizeof(double));
-//            double* fitnessess = (double*)calloc(nobj, sizeof(double));
-//
-//            double* minLimit = (double*)calloc(ndim, sizeof(double));
-//            double* maxLimit = (double*)calloc(ndim, sizeof(double));
-//
-//            EMO_setLimits(prob, minLimit, maxLimit, ndim);
-//
-//            srand((unsigned int)(iRun + 1));
-//
-//            int npop = 120;
-//            if(nobj == 2) npop = 100;
-//            if(nobj == 3) npop = 120;
-//            ////////////////////////////////////////////////////////////////////////
-//            npop = 1;
-//            if(strstr(prob, "Predict_Stock_")) {
-//                npop = 12;
-//            }
-//            //////////////////////////////////////////////////////////////////////////
-//            clock_t start = clock();
-//            for(int i = 0; i < npop; i++) {
-//                //continue;
-//                for(int a = 0; a < ndim; a++) {
-//                    //if(a == 201 || a == 307 || a == 111 || a == 460)
-//                    //    printf("%d ", tmp);
-//                    //printf("%d - %lf ", a, individual[a]);
-//#ifdef READ_PS_FILE
-//                    fscanf(fpt, "%lf", &individual[a]);
-//#else
-//                    int tmp = rand();
-//                    individual[a] = minLimit[a] + tmp / (RAND_MAX + 0.0) * (maxLimit[a] - minLimit[a]);
-//#endif
-//                }
-//#ifdef READ_PS_FILE
-//                if(i != curI) {
-//                    continue;
-//				}
-//#endif
-//                //
-//                EMO_evaluate_problems(prob, individual, fitnessess, ndim, 1, nobj);
-//                printf("iRun %d - ID: %d\n", iRun, i + 1);
-//                for(int a = 0; a < nobj; a++) {
-//                    printf("%.6lf ", fitnessess[a]);
-//                }
-//                printf("\n");
-//
-//                char tfn[1024];
-//                FILE* tfp = NULL;
-//                sprintf(tfn, "tmpFile/%d_FUN_%s_RUN_%d.tmp", seq, prob, iRun);
-//                tfp = fopen(tfn, "a");
-//                for(int a = 0; a < nobj; a++) {
-//                    fprintf(tfp, "%e ", fitnessess[a]);
-//                }
-//                fprintf(tfp, "\n");
-//                fclose(tfp);
-//                //
-//                int tmp_flag_test = 0;
-//                if(strstr(prob, "Predict_Stock_")) {
-//                    Fitness_MOP_Predict_FRNN_test(individual, fitnessess);
-//#ifdef PRINT_STATISTICS_MOP_Predict_FRNN
-//                    statistics_MOP_Predict_FRNN();
-//#endif
-//                    tmp_flag_test = 1;
-//                }
-//                if(tmp_flag_test) {
-//                    for(int a = 0; a < nobj; a++) {
-//                        printf("%.6lf ", fitnessess[a]);
-//                    }
-//                    printf("\n");
-//                    sprintf(tfn, "tmpFile/%d_FUN_%s_RUN_%d_test.tmp", seq, prob, iRun);
-//                    tfp = fopen(tfn, "a");
-//                    for(int a = 0; a < nobj; a++) {
-//                        fprintf(tfp, "%e ", fitnessess[a]);
-//                    }
-//                    fprintf(tfp, "\n");
-//                    fclose(tfp);
-//                }
-//            }
-//            clock_t finish = clock();
-//            printf("Time elapsed in ms: %ld / %ld\n", finish - start, CLOCKS_PER_SEC);
-//
-//            free(individual);
-//            free(fitnessess);
-//            free(minLimit);
-//            free(maxLimit);
-//#ifdef READ_PS_FILE
-//            if(fpt)
-//                fclose(fpt);//////////////////////////////////////////////////////////////////////////////////////////////////////
-//#endif
-//
-//            EMO_finalization(prob);
-//            printf("Done.\n");
-//        }
-//    }
-//
-//    fclose(readf);
-//#ifdef TAG_UPDATE_testInstance_txt
-//    fclose(wrtef);
-//#endif
-//
-//    MPI_Finalize();
-//
-//    return 0;
-//}
+//#define TAG_UPDATE_testInstance_txt
+
+//#define DEBUG_TEST_SUITE
+
+#ifdef DEBUG_TEST_SUITE
+
+static int mat_inds[88][3];
+
+static void readData_general_test_suite(const char* fname)
+{
+    FILE* fpt;
+    if((fpt = fopen(fname, "r")) == NULL) {
+        printf("%s(%d): File open error!\n", __FILE__, __LINE__);
+        exit(10000);
+    }
+    //
+    const int MAX_ATTR_NUM = 100;
+    int n_row;
+    int n_col;
+    char tmp_delim[] = " ,\t\r\n";
+    int max_buf_size = 100 * MAX_ATTR_NUM + 1;
+    char* buf = (char*)malloc(max_buf_size * sizeof(char));
+    char* p;
+    int tmp_cnt;
+    int elem_int;
+    // get size
+    if(fgets(buf, max_buf_size, fpt) == NULL) {
+        printf("%s(%d): No  line\n", __FILE__, __LINE__);
+        exit(-1);
+    }
+    tmp_cnt = 0;
+    for(p = strtok(buf, tmp_delim); p; p = strtok(NULL, tmp_delim)) {
+        if(sscanf(p, "%d", &elem_int) != 1) {
+            printf("\n%s(%d):data are not enough...\n", __FILE__, __LINE__);
+            exit(1001);
+        }
+        if(tmp_cnt == 0) {
+            n_row = elem_int;
+        } else if(tmp_cnt == 1) {
+            n_col = elem_int;
+        } else {
+            if(tmp_cnt == 2) {
+                printf("\n%s(%d):too many data...\n", __FILE__, __LINE__);
+                exit(1002);
+            }
+        }
+        tmp_cnt++;
+    }
+    //get data
+    int seq = 0;
+    for(seq = 0; seq < n_row; seq++) {
+        if(fgets(buf, max_buf_size, fpt) == NULL) {
+            printf("%s(%d): No  line\n", __FILE__, __LINE__);
+            exit(-1);
+        }
+        tmp_cnt = 0;
+        for(p = strtok(buf, tmp_delim); p; p = strtok(NULL, tmp_delim)) {
+            if(sscanf(p, "%d", &elem_int) != 1) {
+                printf("\n%s(%d):data are not enough...\n", __FILE__, __LINE__);
+                exit(2004);
+            }
+            mat_inds[seq][tmp_cnt] = elem_int;
+            tmp_cnt++;
+        }
+        if(n_col != tmp_cnt) {
+            printf("\n%s(%d): the number of data items is not consistant (%d)(%d != %d), exiting ...\n",
+                   __FILE__, __LINE__, seq, n_col, tmp_cnt);
+            exit(2005);
+        }
+    }
+    //
+    free(buf);
+    fclose(fpt);
+}
+
+int main(int argc, char** argv)
+{
+    int mpi_rank;
+    int mpi_size;
+    char my_name[1024];
+    int name_len;
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+    MPI_Get_processor_name(my_name, &name_len);
+
+    int fun_start_num = 387; // the start number of test function, you can find the explanation in testInstance.txt
+    int fun_end_num = 474;   // the end number of test function
+#ifdef TAG_UPDATE_testInstance_txt
+    fun_start_num = 1;
+    fun_end_num = 528;
+#endif
+    int num_run = 20;         // the number of running test instrct_grp_ana_vals.Dependently
+    int iRun;
+
+    int seq;
+    char prob[256];
+    int ndim;
+    int nobj;
+    int para_1 = 0;
+    int para_2 = 0;
+    int para_3 = 0;
+
+    char tmp_str[1024];
+    FILE* readf = fopen("testInstance.txt", "r");
+#ifdef TAG_UPDATE_testInstance_txt
+    FILE* wrtef = fopen("testInst.txt", "w");
+#endif
+    system("mkdir -p tmpFile");
+#ifdef READ_PS_FILE
+    readData_general_test_suite("table_inds.txt");
+#endif
+    int iPro;
+    for(iPro = 1; iPro < fun_start_num; iPro++) {
+        if(!fgets(tmp_str, sizeof(tmp_str), readf)) {
+            if(mpi_rank == 0)
+                printf("%s(%d): Reading file error - no more line, exiting...\n", __FILE__, __LINE__);
+            exit(-1);
+        }
+    }
+    for(iPro = fun_start_num; iPro <= fun_end_num; iPro++) {
+        int nb;
+        if(fgets(tmp_str, sizeof(tmp_str), readf)) {
+            nb = sscanf(tmp_str, "%d %s %d %d %d %d %d", &seq, prob, &ndim, &nobj, &para_1, &para_2, &para_3);
+            if(nb < 4) {
+                if(mpi_rank == 0)
+                    printf("%s(%d): Reading file error - no more para, exiting...\n", __FILE__, __LINE__);
+                exit(-2);
+            }
+        } else {
+            if(mpi_rank == 0)
+                printf("%s(%d): Reading file error - no more line, exiting...\n", __FILE__, __LINE__);
+            exit(-1);
+        }
+
+#ifdef TAG_UPDATE_testInstance_txt
+        if(nb == 4)
+            fprintf(wrtef, "%d\t%s\t%d\t%d\n", iPro, prob, ndim, nobj);
+        else
+            fprintf(wrtef, "%d\t%s\t%d\t%d\t%d\t%d\t%d\n", iPro, prob, ndim, nobj, para_1, para_2, para_3);
+        continue;
+#endif
+
+        for(iRun = 1; iRun <= num_run; iRun++) {
+#ifdef READ_PS_FILE
+            int cur_row = iPro - fun_start_num;
+            if(mat_inds[cur_row][0] != iRun) continue;
+#endif
+
+            EMO_initialization(prob, nobj, ndim, iRun - 1, num_run, mpi_rank, para_1, para_2, para_3);
+
+            printf("\n--   run %d   --\n\n\n-- PROBLEM %s\n--  variables: %d\n--  objectives: %d\n\n",
+                   iRun, prob, ndim, nobj);
+
+            double* individual = (double*)calloc(ndim, sizeof(double));
+            double* fitnessess = (double*)calloc(nobj, sizeof(double));
+
+            double* minLimit = (double*)calloc(ndim, sizeof(double));
+            double* maxLimit = (double*)calloc(ndim, sizeof(double));
+
+            EMO_setLimits(prob, minLimit, maxLimit, ndim);
+
+            srand((unsigned int)(iRun + 1));
+
+            int npop = 120;
+            if(nobj == 2) npop = 100;
+            if(nobj == 3) npop = 120;
+            ////////////////////////////////////////////////////////////////////////
+            //npop = 120;
+            int flag_evo_pred = 0;
+            if(!strncmp(prob, "evoFRNN_Predict_", 16) ||
+               !strncmp(prob, "evoGFRNN_Predict_", 17) ||
+               !strncmp(prob, "evoDFRNN_Predict_", 17) ||
+               !strncmp(prob, "evoFGRNN_Predict_", 17) ||
+               !strncmp(prob, "evoDFGRNN_Predict_", 18) ||
+               !strncmp(prob, "evoGFGRNN_Predict_", 18) ||
+               !strncmp(prob, "evoBFRNN_Predict_", 17) ||
+               !strncmp(prob, "evoBGFRNN_Predict_", 18) ||
+               !strncmp(prob, "evoBDFRNN_Predict_", 18) ||
+               !strncmp(prob, "evoBFGRNN_Predict_", 18) ||
+               !strncmp(prob, "evoBDFGRNN_Predict_", 19) ||
+               !strncmp(prob, "evoBGFGRNN_Predict_", 19)) {
+                flag_evo_pred = 1;
+                npop = 12;
+            }
+
+#ifdef READ_PS_FILE
+            char tmp_fn[1024];
+            if(mat_inds[cur_row][1] == 26)
+                sprintf(tmp_fn,
+                        "../trial06_PStrace/PS/DPCCMOLSIA_MP_III_FUN_%s_OBJ%d_VAR%d_MPI96_RUN%d", prob, nobj, ndim,
+                        mat_inds[cur_row][0]);
+            else
+                sprintf(tmp_fn,
+                        "../trial06_PStrace/PS/trace/DPCCMOLSIA_MP_III_FUN_%s_OBJ%d_VAR%d_MPI96_RUN%d_key%d", prob, nobj, ndim,
+                        mat_inds[cur_row][0], mat_inds[cur_row][1] - 1);
+            FILE* fpt = fopen(tmp_fn, "r");
+            if(!fpt) {
+                printf("%s(%d): Open file error ! Exiting ...\n", __FILE__, __LINE__);
+                exit(-1375);
+            }
+            npop = 12;
+#endif
+            //////////////////////////////////////////////////////////////////////////
+            clock_t start = clock();
+            for(int i = 0; i < npop; i++) {
+#ifdef READ_PS_FILE
+                if(mat_inds[cur_row][2] - 1 != i) continue;
+#endif
+                for(int a = 0; a < ndim; a++) {
+#ifdef READ_PS_FILE
+                    fscanf(fpt, "%lf", &individual[a]);
+#else
+                    int tmp = rand();
+                    individual[a] = minLimit[a] + tmp / (RAND_MAX + 0.0) * (maxLimit[a] - minLimit[a]);
+#endif
+                }
+                //
+                EMO_evaluate_problems(prob, individual, fitnessess, ndim, 1, nobj);
+                printf("iRun %d - ID: %d\n", iRun, i + 1);
+                for(int a = 0; a < nobj; a++) {
+                    printf("%.6lf ", fitnessess[a]);
+                }
+                printf("\n");
+
+                char tfn[1024];
+                FILE* tfp = NULL;
+                sprintf(tfn, "tmpFile/%d_FUN_%s_RUN_%d.tmp", seq, prob, iRun);
+                tfp = fopen(tfn, "a");
+                for(int a = 0; a < nobj; a++) {
+                    fprintf(tfp, "%e ", fitnessess[a]);
+                }
+                fprintf(tfp, "\n");
+                fclose(tfp);
+                //
+                int tmp_flag_test = 0;
+                if(flag_evo_pred) {
+                    Fitness_MOP_Predict_FRNN_test(individual, fitnessess);
+#ifdef PRINT_STATISTICS_MOP_Predict_FRNN
+                    sprintf(tfn, "tmpFile/%d_FUN_%s_RUN_%d_statistics.tmp", seq, prob, mat_inds[cur_row][0]);
+                    tfp = fopen(tfn, "w");
+                    statistics_MOP_Predict_FRNN(tfp);
+                    fclose(tfp);
+#endif
+                    tmp_flag_test = 1;
+                } else if(strstr(prob, "evoMobileSink")) {
+                    Fitness_MOP_Mob_Sink_test(individual, fitnessess);
+                    tmp_flag_test = 1;
+                }
+                if(tmp_flag_test) {
+                    for(int a = 0; a < nobj; a++) {
+                        printf("%.6lf ", fitnessess[a]);
+                    }
+                    printf("\n");
+                    sprintf(tfn, "tmpFile/%d_FUN_%s_RUN_%d_test.tmp", seq, prob, iRun);
+                    tfp = fopen(tfn, "a");
+                    for(int a = 0; a < nobj; a++) {
+                        fprintf(tfp, "%e ", fitnessess[a]);
+                    }
+                    fprintf(tfp, "\n");
+                    fclose(tfp);
+                }
+            }
+            clock_t finish = clock();
+            printf("Time elapsed in ms: %ld / %ld\n", finish - start, CLOCKS_PER_SEC);
+
+            free(individual);
+            free(fitnessess);
+            free(minLimit);
+            free(maxLimit);
+#ifdef READ_PS_FILE
+            if(fpt)
+                fclose(fpt);
+#endif
+
+            EMO_finalization(prob);
+            printf("Done.\n");
+        }
+    }
+
+    fclose(readf);
+#ifdef TAG_UPDATE_testInstance_txt
+    fclose(wrtef);
+#endif
+
+    MPI_Finalize();
+
+    return 0;
+}
+#endif

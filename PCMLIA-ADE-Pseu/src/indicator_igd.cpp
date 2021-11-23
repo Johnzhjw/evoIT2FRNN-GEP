@@ -157,7 +157,8 @@ double generateIGD(char* _testName, char* _algoName, double* _estedPF, int _nEst
        !strncmp(_testName, "evoBFRNN_Predict_", 17) ||
        !strcmp(_testName, "IntrusionDetection_FRNN_Classify") ||
        !strcmp(_testName, "ActivityDetection_FRNN_Classify") ||
-       !strcmp(_testName, "evoCFRNN_Classify")) {
+       !strcmp(_testName, "evoCFRNN_Classify") ||
+       strstr(_testName, "evoMobileSink")) {
         return -10.0;
     }
 

@@ -108,6 +108,7 @@ void modify_hyper_paras(const char* prob, int nobj, int ndim, int& NP, int& N_ar
         NP = 100;
         break;
     case 3:
+    case 4:
         N_arch = 120;
         NP = 120;
         break;
@@ -125,7 +126,7 @@ void modify_hyper_paras(const char* prob, int nobj, int ndim, int& NP, int& N_ar
         break;
     default:
         if(st_MPI_p.mpi_rank == 0)
-            printf("%s:Undefined number of objectives (%d is not 2, 3, 5, or 10), exiting...\n", AT, nobj);
+            printf("%s:Undefined number of objectives (%d is not 2, 3, 4, 5, or 10), exiting...\n", AT, nobj);
         MPI_Abort(MPI_COMM_WORLD, MY_ERROR_OBJ_TOOMANY);
         break;
     }
@@ -225,6 +226,11 @@ void modify_hyper_paras(const char* prob, int nobj, int ndim, int& NP, int& N_ar
     } else if(!strcmp(prob, "evoCFRNN_Classify")) {
         maxIter = (int)(1e6);
         the_type_test = MY_TYPE_EVO_CFRNN;
+    } else if(strstr(prob, "evoMobileSink")) {
+        maxIter = NP * 1000;
+        if(strstr(prob, "GEP_only"))
+            maxIter = NP * 1000;
+        the_type_test = MY_TYPE_EVO_MOBILE_SINK;
     }
     //
     return;
@@ -250,11 +256,7 @@ void readParaFromFile()
         char tmp_str_nm[1024];
         char tmp_str_val[1024];
         if(sscanf(tmp_s, "%s %s", tmp_str_nm, tmp_str_val) != 2) {
-            if(0 == st_MPI_p.mpi_rank) {
-                printf("%s: read para error\n", AT);
-            }
-            MPI_Abort(MPI_COMM_WORLD, MY_ERROR_FILE_PARA);
-            return;
+            continue;
         }
         if(!strcmp(tmp_str_nm, "optimizer_type")) {
             if(!strcmp(tmp_str_val, "EC_DE_CUR_1")) {
@@ -372,11 +374,17 @@ void readParaFromFile()
                 MPI_Abort(MPI_COMM_WORLD, MY_ERROR_FILE_PARA);
                 return;
             }
-        } else if(!strcmp(tmp_str_nm, "QuantumPara_tag")) {
-            if(!strcmp(tmp_str_val, "FLAG_OFF")) {
-                st_ctrl_p.QuantumPara_tag = FLAG_OFF;
-            } else if(!strcmp(tmp_str_val, "FLAG_ON")) {
-                st_ctrl_p.QuantumPara_tag = FLAG_ON;
+        } else if(!strcmp(tmp_str_nm, "ScalePara_tag")) {
+            if(!strcmp(tmp_str_val, "SCALE_NONE")) {
+                st_ctrl_p.ScalePara_tag = SCALE_NONE;
+            } else if(!strcmp(tmp_str_val, "SCALE_QUANTUM")) {
+                st_ctrl_p.ScalePara_tag = SCALE_QUANTUM;
+            } else if(!strcmp(tmp_str_val, "SCALE_LEVY")) {
+                st_ctrl_p.ScalePara_tag = SCALE_LEVY;
+            } else if(!strcmp(tmp_str_val, "SCALE_CAUCHY")) {
+                st_ctrl_p.ScalePara_tag = SCALE_CAUCHY;
+            } else if(!strcmp(tmp_str_val, "SCALE_GAUSS")) {
+                st_ctrl_p.ScalePara_tag = SCALE_GAUSS;
             } else {
                 if(0 == st_MPI_p.mpi_rank) {
                     printf("%s: invalid para val for %s\n", AT, tmp_str_nm);
@@ -473,6 +481,32 @@ void readParaFromFile()
                 st_ctrl_p.flag_check_more_update_DECOM = FLAG_OFF;
             } else if(!strcmp(tmp_str_val, "FLAG_ON")) {
                 st_ctrl_p.flag_check_more_update_DECOM = FLAG_ON;
+            } else {
+                if(0 == st_MPI_p.mpi_rank) {
+                    printf("%s: invalid para val for %s\n", AT, tmp_str_nm);
+                }
+                MPI_Abort(MPI_COMM_WORLD, MY_ERROR_FILE_PARA);
+                return;
+            }
+        } else if(!strcmp(tmp_str_nm, "type_xor_evo_mut")) {
+            if(!strcmp(tmp_str_val, "XOR_EVO_MUT_FIX")) {
+                st_ctrl_p.type_xor_evo_mut = XOR_EVO_MUT_FIX;
+            } else if(!strcmp(tmp_str_val, "XOR_EVO_MUT_ADAP")) {
+                st_ctrl_p.type_xor_evo_mut = XOR_EVO_MUT_ADAP;
+            } else {
+                if(0 == st_MPI_p.mpi_rank) {
+                    printf("%s: invalid para val for %s\n", AT, tmp_str_nm);
+                }
+                MPI_Abort(MPI_COMM_WORLD, MY_ERROR_FILE_PARA);
+                return;
+            }
+        } else if(!strcmp(tmp_str_nm, "type_clone_evo")) {
+            if(!strcmp(tmp_str_val, "CLONE_EVO_LOCAL")) {
+                st_ctrl_p.type_clone_evo = CLONE_EVO_LOCAL;
+            } else if(!strcmp(tmp_str_val, "CLONE_EVO_GLOBAL")) {
+                st_ctrl_p.type_clone_evo = CLONE_EVO_GLOBAL;
+            } else if(!strcmp(tmp_str_val, "CLONE_EVO_NONE")) {
+                st_ctrl_p.type_clone_evo = CLONE_EVO_NONE;
             } else {
                 if(0 == st_MPI_p.mpi_rank) {
                     printf("%s: invalid para val for %s\n", AT, tmp_str_nm);
@@ -639,6 +673,7 @@ void setParaDefault()
     st_ctrl_p.type_clone_evo =
         CLONE_EVO_LOCAL;
     CLONE_EVO_GLOBAL;
+    CLONE_EVO_NONE;
     st_ctrl_p.type_join_xor =
         JOIN_XOR_RAND;
     JOIN_XOR_AGGFIT;
@@ -650,9 +685,18 @@ void setParaDefault()
     st_ctrl_p.MFI_update_tag =
         FLAG_OFF;
     FLAG_ON;
-    st_ctrl_p.QuantumPara_tag =
-        FLAG_OFF;
-    FLAG_ON;
+    st_ctrl_p.ScalePara_tag =
+        SCALE_NONE;
+    SCALE_QUANTUM;
+    SCALE_LEVY;
+    SCALE_CAUCHY;
+    SCALE_GAUSS;
+    st_ctrl_p.st_scale_para.levy_c = 0.1;
+    st_ctrl_p.st_scale_para.levy_a = 1;
+    st_ctrl_p.st_scale_para.cauchy_a = 0;
+    st_ctrl_p.st_scale_para.cauchy_b = 1;
+    st_ctrl_p.st_scale_para.gauss_a = 0;
+    st_ctrl_p.st_scale_para.gauss_b = 1;
     st_ctrl_p.Qubits_angle_opt_tag =
         FLAG_OFF;
     FLAG_ON;
@@ -703,7 +747,7 @@ void setParaDefault()
         GROUPING_TYPE_CLASSIFY_RANDOM;
     GROUPING_TYPE_SPECTRAL_CLUSTERING;
     st_ctrl_p.type_feature_adjust = FEATURE_ADJUST_FILTER_MARKOV;
-    st_ctrl_p.type_xor_evo_fs = XOR_FS_FIX;//
+    st_ctrl_p.type_xor_evo_mut = XOR_EVO_MUT_FIX;//
     //////////////////////////////////////////////////////////////////////////
     st_ctrl_p.type_xor_CNN = XOR_CNN_NORMAL;
     XOR_CNN_LeNet;
@@ -837,12 +881,18 @@ void initializePara()
     st_PSO_p.c1_mu = st_PSO_p.c1_min + 0.5 * (st_PSO_p.c1_max - st_PSO_p.c1_min);
     st_PSO_p.c2_mu = st_PSO_p.c2_min + 0.5 * (st_PSO_p.c2_max - st_PSO_p.c2_min);
     for(i = 0; i < st_global_p.the_size_IND; i++) {
-        st_PSO_p.w[i] = st_PSO_p.w_fixed;
-        st_PSO_p.c1[i] = st_PSO_p.c1_fixed;
-        st_PSO_p.c2[i] = st_PSO_p.c2_fixed;
+        st_PSO_p.w__cur[i] = st_PSO_p.w_fixed;
+        st_PSO_p.c1_cur[i] = st_PSO_p.c1_fixed;
+        st_PSO_p.c2_cur[i] = st_PSO_p.c2_fixed;
     }
     st_PSO_p.alpha_begin_Qu = 1.0;
     st_PSO_p.alpha_final_Qu = 0.9;
+
+    for(i = 0; i < st_archive_p.nArch; i++) {
+        st_PSO_p.w__archive[i] = st_PSO_p.w_fixed;
+        st_PSO_p.c1_archive[i] = st_PSO_p.c1_fixed;
+        st_PSO_p.c2_archive[i] = st_PSO_p.c2_fixed;
+    }
 
     //
     for(i = 0; i < st_global_p.nObj; i++) {
@@ -943,30 +993,23 @@ void initializePara()
     st_DE_p.slctProb_SHADE = 0.0;
     st_DE_p.slctProb_SaNSDE_F = 0.5;
 
-    st_DE_p.F_mu_JADE = 0.5;
+    st_DE_p.F_mu = 0.5;
     st_DE_p.CR_mu = 0.5;
-    st_DE_p.CR_mu_evo = 0.5;
+    st_DE_p.CR_evo_mu = 0.5;
     st_DE_p.F_mu_arch = 0.5;
-    st_DE_p.CR_mu_arch = 0.9;
+    st_DE_p.CR_mu_arch = 0.5;
+    st_DE_p.CR_evo_mu_arch = 0.5;
     st_decomp_p.th_select = 0.9;
 
     st_DE_p.Fcount = 0;
     st_DE_p.CRcount = 0;
     st_DE_p.c_para = 0.1;
 
-    for(i = 0; i < st_global_p.nDim; i++) st_optimizer_p.rate_Commonality[i] = 1;
+    for(i = 0; i < st_global_p.nInd_1pop; i++) st_optimizer_p.rate_Commonality[i] = 1;
 
     for(i = 0; i < st_global_p.nInd_1pop; i++) {
         st_DE_p.Sflag[i] = 0;
-        st_DE_p.Fall_JADE[i] = st_DE_p.F_mu_JADE;
-        st_DE_p.CRall_JADE[i] = st_DE_p.CR_mu;
-        st_DE_p.Fall_jDE[i] = 0.5;
-        st_DE_p.CRall_jDE[i] = 0.5;
-        st_DE_p.Fall_NSDE[i] = 0.5;
-        st_DE_p.CRall_NSDE[i] = 0.5;
-        st_DE_p.Fall_SaNSDE[i] = 0.5;
-        st_DE_p.CRall_SaNSDE[i] = 0.5;
-        st_DE_p.CRall_evo[i] = st_DE_p.CR_mu_evo;
+        st_DE_p.CR_evo_cur[i] = st_DE_p.CR_evo_mu;
         st_DE_p.F__cur[i] = 0.5;
         st_DE_p.CR_cur[i] = 0.5;
     }
@@ -974,6 +1017,7 @@ void initializePara()
     for(i = 0; i < st_archive_p.nArch; i++) {
         st_DE_p.F__archive[i] = st_DE_p.F_mu_arch;
         st_DE_p.CR_archive[i] = st_DE_p.CR_mu_arch;
+        st_DE_p.CR_evo_arc[i] = st_DE_p.CR_evo_mu_arch;
     }
 
     for(i = 0; i < st_global_p.num_subpops * st_DE_p.nHistSHADE; i++) {
@@ -1660,7 +1704,7 @@ void initializeGenNum()
     int* CHECK_GAP_EXCH = &st_global_p.CHECK_GAP_EXCH;
     int* NUPDT = &st_global_p.NUPDT;
     int algo_mech_type = st_ctrl_p.algo_mech_type;
-    int type_test = st_ctrl_p.type_test;
+    int flag_grp_predefined = st_grp_info_p.flag_predefined;
     char* testInstance = st_global_p.testInstance;
     int* usedIter_init_grp = &st_global_p.usedIter_init_grp;
     int NumControlAnalysis = st_grp_ana_p.NumControlAnalysis;
@@ -1703,29 +1747,12 @@ void initializeGenNum()
     }
 
     //////////////////////////////////////////////////////////////////////////
-    if(type_test == MY_TYPE_NORMAL) {
-        if(!strcmp(testInstance, "WDCN") ||
-           !strcmp(testInstance, "ARRANGE2D") ||
-           !strcmp(testInstance, "HDSN_URBAN") ||
-           !strcmp(testInstance, "IWSN_S_1F") ||
-           !strcmp(testInstance, "EdgeComputation") ||
-           !strncmp(testInstance, "FRNN", 4) ||
-           !strncmp(testInstance, "EVO1_FRNN", 9) ||
-           !strncmp(testInstance, "EVO2_FRNN", 9) ||
-           !strncmp(testInstance, "EVO3_FRNN", 9) ||
-           !strncmp(testInstance, "EVO4_FRNN", 9) ||
-           !strncmp(testInstance, "EVO5_FRNN", 9) ||
-           !strncmp(testInstance, "EVOmore3_FRNN", 13) ||
-           !strncmp(testInstance, "EVOmore4_FRNN", 13) ||
-           !strncmp(testInstance, "EVOmore5_FRNN", 13)) {
-            (*usedIter_init_grp) = 0;
-        } else {
-            (*usedIter_init_grp) = 0 + //initialize pop for grouping
-                                   nDim * NumControlAnalysis * NumRepControlAnalysis + //ControlVariableAnalysis
-                                   (nDim) * (nDim + 1);//InterdependenceAnalysis
-        }
-    } else {
+    if(flag_grp_predefined) {
         (*usedIter_init_grp) = 0;
+    } else {
+        (*usedIter_init_grp) = 0 + //initialize pop for grouping
+                               nDim * NumControlAnalysis * NumRepControlAnalysis + //ControlVariableAnalysis
+                               (nDim) * (nDim + 1);//InterdependenceAnalysis
     }
     //
     (*usedIter_initPop) = 0;

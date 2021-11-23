@@ -246,7 +246,7 @@ void show_F_CR_mu()
 {
     if(st_MPI_p.color_obj) {
         printf("rank: %d\n", st_MPI_p.mpi_rank);
-        printf("F_mu = %lf\n", st_DE_p.F_mu_JADE);
+        printf("F_mu = %lf\n", st_DE_p.F_mu);
         printf("CR_mu = %lf\n", st_DE_p.CR_mu);
     }
 }
@@ -258,11 +258,11 @@ void show_F_CR()
     if(st_MPI_p.color_obj) {
         printf("Obj F:\n");
         for(i = 0; i < st_global_p.nPop_mine; i++) {
-            printf("ID: %d F %lf\n", i + 1, st_DE_p.Fall_JADE[i]);
+            printf("ID: %d F %lf\n", i + 1, st_DE_p.F__cur[i]);
         }
         printf("Obj CR:\n");
         for(i = 0; i < st_global_p.nPop_mine; i++) {
-            printf("ID: %d CR %lf\n", i + 1, st_DE_p.CRall_JADE[i]);
+            printf("ID: %d CR %lf\n", i + 1, st_DE_p.CR_cur[i]);
         }
     } else {
         printf("Arch F:\n");
@@ -471,7 +471,8 @@ void show_indicator_vars_simp(int finalTag)
               st_ctrl_p.type_test == MY_TYPE_ACTIVITY_DETECTION_CLASSIFY ||
               st_ctrl_p.type_test == MY_TYPE_RecSys_SmartCity ||
               st_ctrl_p.type_test == MY_TYPE_EVO_CNN ||
-              st_ctrl_p.type_test == MY_TYPE_EVO_CFRNN) {  //case 1 and 2
+              st_ctrl_p.type_test == MY_TYPE_EVO_CFRNN ||
+              st_ctrl_p.type_test == MY_TYPE_EVO_MOBILE_SINK) {  //case 1 and 2
         char filename[MAX_CHAR_ARR_SIZE];
         double* pFront_valid = (double*)calloc(size_tmp * st_global_p.nObj, sizeof(double));
         double* pFront = (double*)calloc(size_tmp * st_global_p.nObj, sizeof(double));
@@ -605,6 +606,9 @@ void show_indicator_vars_simp(int finalTag)
         case MY_TYPE_EVO_CFRNN:
             testFuncPtFLT = Fitness_evoCFRNN_Classify_test;
             break;
+        case MY_TYPE_EVO_MOBILE_SINK:
+            testFuncPtFLT = Fitness_MOP_Mob_Sink_test;
+            break;
         default:
             if(0 == st_MPI_p.mpi_rank) {
                 printf("%s:Problem type error, exiting...\n", AT);
@@ -694,6 +698,7 @@ void show_indicator_vars_simp(int finalTag)
         case MY_TYPE_EVO_CFRNN:
         case MY_TYPE_NN_CLASSIFY_Indus:
         case MY_TYPE_CFRNN_CLASSIFY:
+        case MY_TYPE_EVO_MOBILE_SINK:
             quo = size_tmp / st_MPI_p.mpi_size;
             rem = size_tmp % st_MPI_p.mpi_size;
             for(int i = 0; i < st_MPI_p.mpi_size; i++) {
@@ -1049,6 +1054,9 @@ void show_para_A()
         case MY_TYPE_EVO_CFRNN:
             printf("MY_TYPE_EVO_CFRNN\n");
             break;
+        case MY_TYPE_EVO_MOBILE_SINK:
+            printf("MY_TYPE_EVO_MOBILE_SINK\n");
+            break;
         //case MY_TYPE_RS_SC:
         //    printf("MY_TYPE_RS_SC\n");
         //    break;
@@ -1297,6 +1305,9 @@ void show_para_A()
         case CLONE_EVO_GLOBAL:
             printf("CLONE_EVO_GLOBAL\n");
             break;
+        case CLONE_EVO_NONE:
+            printf("CLONE_EVO_NONE\n");
+            break;
         default:
             printf("Unknown\n");
             fail_tag++;
@@ -1428,13 +1439,13 @@ void show_para_A()
         //
         count++;
         printf("A%02d", count);
-        printf("-- strct_ctrl_para.type_xor_evo_fs:\t");
-        switch(st_ctrl_p.type_xor_evo_fs) {
-        case XOR_FS_FIX:
-            printf("XOR_FS_FIX\n");
+        printf("-- strct_ctrl_para.type_xor_evo_mut:\t");
+        switch(st_ctrl_p.type_xor_evo_mut) {
+        case XOR_EVO_MUT_FIX:
+            printf("XOR_EVO_MUT_FIX\n");
             break;
-        case XOR_FS_ADAP:
-            printf("XOR_FS_ADAP\n");
+        case XOR_EVO_MUT_ADAP:
+            printf("XOR_EVO_MUT_ADAP\n");
             break;
         default:
             printf("Unknown\n");
@@ -1559,13 +1570,22 @@ void show_para_A()
         //
         count++;
         printf("A%02d", count);
-        printf("-- strct_ctrl_para.QuantumPara_tag:\t");
-        switch(st_ctrl_p.QuantumPara_tag) {
-        case FLAG_ON:
-            printf("FLAG_ON\n");
+        printf("-- strct_ctrl_para.ScalePara_tag:\t");
+        switch(st_ctrl_p.ScalePara_tag) {
+        case SCALE_NONE:
+            printf("SCALE_NONE\n");
             break;
-        case FLAG_OFF:
-            printf("FLAG_OFF\n");
+        case SCALE_QUANTUM:
+            printf("SCALE_QUANTUM\n");
+            break;
+        case SCALE_LEVY:
+            printf("SCALE_LEVY\n");
+            break;
+        case SCALE_CAUCHY:
+            printf("SCALE_CAUCHY\n");
+            break;
+        case SCALE_GAUSS:
+            printf("SCALE_GAUSS\n");
             break;
         default:
             printf("Unknown\n");
@@ -2018,6 +2038,48 @@ void show_para_Prob()
                 MPI_Abort(MPI_COMM_WORLD, MY_ERROR_PROBLEM_PARA);
             }
         }
+    }
+    //
+    return;
+}
+
+void show_DeBug_info()
+{
+    //printf("nDim=%d\n", st_global_p.nDim);
+    //printf("ratio_mut=%lf\n", st_optimizer_p.ratio_mut);
+    //printf("type_xor_rem_vars=%d\n", st_ctrl_p.type_xor_rem_vars);
+    //printf("type_test=%d\n", st_ctrl_p.type_test);
+    //printf("commonality_xor_remvar_tag=%d\n", st_ctrl_p.commonality_xor_remvar_tag);
+    //printf("type_feature_adjust=%d\n", st_ctrl_p.type_feature_adjust);
+    //printf("type_mut_general=%d\n", st_ctrl_p.type_mut_general);
+    //printf("type_del_var=%d\n", st_ctrl_p.type_del_var);
+    if(st_MPI_p.mpi_rank == 0) {
+        printf("nPop=%d\n", st_global_p.nPop);
+        printf("nPop_mine=%d\n", st_global_p.nPop_mine);
+        printf("nDim=%d\n", st_global_p.nDim);
+        printf("type_xor_rem_vars=%d\n", st_ctrl_p.type_xor_rem_vars);
+        //int* parent_type = st_decomp_p.parent_type;
+        //int* tableNeighbor = st_decomp_p.tableNeighbor;
+        //printf("maxNneighb=%d\n", nPop); //
+        printf("niche=%d\n", st_decomp_p.niche);
+        printf("type_join_xor=%d\n", st_ctrl_p.type_join_xor);
+        printf("color_pop=%d\n", st_MPI_p.color_pop);
+        //double* cur_obj = st_pop_evo_cur.obj;
+        //double* cur_var = st_pop_evo_cur.var;
+        printf("commonality_xor_remvar_tag=%d\n", st_ctrl_p.commonality_xor_remvar_tag);
+        //int* table_mine_flag = st_grp_info_p.table_mine_flag;
+        //int* types_var_all = st_ctrl_p.types_var_all;
+        //double* rate_Commonality = st_optimizer_p.rate_Commonality;
+        printf("type_test=%d\n", st_ctrl_p.type_test);
+        printf("type_xor_CNN=%d\n", st_ctrl_p.type_xor_CNN);
+        //printf("nPop_cur=%d\n", nPop);
+        //printf("nPop_candid_all=%d\n", nPop);
+        printf("algo_mech_type=%d\n", st_ctrl_p.algo_mech_type);
+        //
+        //printf("rank%d-ADDR-%d\n", st_MPI_p.mpi_rank, st_optimizer_p.optimizer_types_all);
+        for(int iID = 0; iID < st_global_p.nPop; iID++)
+            if(st_optimizer_p.optimizer_types_all[iID] != st_ctrl_p.optimizer_type)
+                printf("rank%d-%d(%d)", st_MPI_p.mpi_rank, st_optimizer_p.optimizer_types_all[iID], iID);
     }
     //
     return;

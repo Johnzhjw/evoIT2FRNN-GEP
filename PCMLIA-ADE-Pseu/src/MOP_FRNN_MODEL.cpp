@@ -7469,12 +7469,14 @@ void ff_outReduceLayer(OutReduceLayer* oLayer, MY_FLT_TYPE** degreesInput, MY_FL
                 MY_FLT_TYPE temp1 = 0;
                 MY_FLT_TYPE temp2 = 0;
                 for(int k = 0; k < oLayer->numInputConsequenceNode; k++) {
-                    temp1 += oLayer->paraConsequenceNode[i][j][0][k] * oLayer->inputConsequenceNode[i][k];
+                    MY_FLT_TYPE cur_val = (oLayer->inputConsequenceNode[i][k] - oLayer->inputMin_cnsq[k]) /
+                                          (oLayer->inputMax_cnsq[k] - oLayer->inputMin_cnsq[k]);
+                    temp1 += oLayer->paraConsequenceNode[i][j][0][k] * cur_val;
                     if(oLayer->typeFuzzySet == FUZZY_INTERVAL_TYPE_II) {
                         if(oLayer->typeTypeReducer == NIE_TAN_TYPE_REDUCER)
                             temp2 = temp1;
                         else if(oLayer->typeTypeReducer == CENTER_OF_SETS_TYPE_REDUCER)
-                            temp2 += oLayer->paraConsequenceNode[i][j][1][k] * oLayer->inputConsequenceNode[i][k];
+                            temp2 += oLayer->paraConsequenceNode[i][j][1][k] * cur_val;
                     }
                 }
                 int k = oLayer->numInputConsequenceNode;
@@ -8868,6 +8870,32 @@ long    rnd_uni_init_FRNN_MODEL = -(long)seed_FRNN_MODEL;
 MY_FLT_TYPE rndreal_FRNN_MODEL(MY_FLT_TYPE low, MY_FLT_TYPE high)
 {
     return (low + (high - low) * rnd_uni_FRNN_MODEL(&rnd_uni_init_FRNN_MODEL));
+}
+
+MY_FLT_TYPE gaussrand_FRNN_MODEL(MY_FLT_TYPE a, MY_FLT_TYPE b)
+{
+    static double V1, V2, S;
+    static int phase = 0;
+    double X;
+
+    if(phase == 0) {
+        do {
+            double U1 = rnd_uni_FRNN_MODEL(&rnd_uni_init_FRNN_MODEL);
+            double U2 = rnd_uni_FRNN_MODEL(&rnd_uni_init_FRNN_MODEL);
+
+            V1 = 2 * U1 - 1;
+            V2 = 2 * U2 - 1;
+            S = V1 * V1 + V2 * V2;
+        } while(S >= 1 || S == 0);
+
+        X = V1 * sqrt(-2 * log(S) / S);
+    } else
+        X = V2 * sqrt(-2 * log(S) / S);
+
+    phase = 1 - phase;
+
+    //return X;
+    return (X * b + a);
 }
 
 int rnd_FRNN_MODEL(int low, int high)

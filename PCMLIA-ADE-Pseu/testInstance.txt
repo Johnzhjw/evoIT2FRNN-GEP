@@ -296,94 +296,233 @@
 296	Classify_CFRNN_MNIST_FM	0	0
 297	Classify_CFRNN_FashionMNIST_FM	0	0
 298	EdgeComputation	0	0
-299	evoFGRNN_Predict_Classify_iris	0	0
-300	evoFGRNN_Predict_Classify_hcvdat	0	0
-301	evoFGRNN_Predict_Classify_kr-vs-kp-data	0	0
-302	evoFRNN_Predict_Stock_0941	0	0	10	16	19
-303	evoFRNN_Predict_Stock_1288	0	0	19	25	28
-304	evoFRNN_Predict_Stock_0005	0	0	28	34	37
-305	evoDFRNN_Predict_Stock_0941	0	0	10	16	19
-306	evoDFRNN_Predict_Stock_1288	0	0	19	25	28
-307	evoDFRNN_Predict_Stock_0005	0	0	28	34	37
-308	evoFGRNN_Predict_Stock_0941	0	0	10	16	19
-309	evoFGRNN_Predict_Stock_1288	0	0	19	25	28
-310	evoFGRNN_Predict_Stock_0005	0	0	28	34	37
-311	evoDFGRNN_Predict_Stock_0941	0	0	10	16	19
-312	evoDFGRNN_Predict_Stock_1288	0	0	19	25	28
-313	evoDFGRNN_Predict_Stock_0005	0	0	28	34	37
-314	evoBFRNN_Predict_Stock_0941	0	0	10	16	19
-315	evoBFRNN_Predict_Stock_1288	0	0	19	25	28
-316	evoBFRNN_Predict_Stock_0005	0	0	28	34	37
-317	evoBDFRNN_Predict_Stock_0941	0	0	10	16	19
-318	evoBDFRNN_Predict_Stock_1288	0	0	19	25	28
-319	evoBDFRNN_Predict_Stock_0005	0	0	28	34	37
-320	evoBFGRNN_Predict_Stock_0941	0	0	10	16	19
-321	evoBFGRNN_Predict_Stock_1288	0	0	19	25	28
-322	evoBFGRNN_Predict_Stock_0005	0	0	28	34	37
-323	evoBDFGRNN_Predict_Stock_0941	0	0	10	16	19
-324	evoBDFGRNN_Predict_Stock_1288	0	0	19	25	28
-325	evoBDFGRNN_Predict_Stock_0005	0	0	28	34	37
-326	evoFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-327	evoFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-328	evoFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-329	evoFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-330	evoFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-331	evoFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-332	evoFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-333	evoFRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
-334	evoDFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-335	evoDFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-336	evoDFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-337	evoDFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-338	evoDFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-339	evoDFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-340	evoDFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-341	evoDFRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
-342	evoFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-343	evoFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-344	evoFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-345	evoFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-346	evoFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-347	evoFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-348	evoFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-349	evoFGRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
-350	evoDFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-351	evoDFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-352	evoDFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-353	evoDFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-354	evoDFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-355	evoDFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-356	evoDFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-357	evoDFGRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
-358	evoBFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-359	evoBFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-360	evoBFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-361	evoBFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-362	evoBFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-363	evoBFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-364	evoBFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-365	evoBFRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
-366	evoBDFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-367	evoBDFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-368	evoBDFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-369	evoBDFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-370	evoBDFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-371	evoBDFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-372	evoBDFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-373	evoBDFRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
-374	evoBFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-375	evoBFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-376	evoBFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-377	evoBFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-378	evoBFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-379	evoBFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-380	evoBFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-381	evoBFGRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
-382	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
-383	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
-384	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
-385	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
-386	evoBDFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
-387	evoBDFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
-388	evoBDFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
-389	evoBDFGRNN_Predict_TimeSeries_Daily_Demand_Forecasting_Orders	0	0
+299	evoFRNN_Predict_Stock_0941	0	0	10	16	19
+300	evoFRNN_Predict_Stock_1288	0	0	19	25	28
+301	evoFRNN_Predict_Stock_0005	0	0	28	34	37
+302	evoDFRNN_Predict_Stock_0941	0	0	10	16	19
+303	evoDFRNN_Predict_Stock_1288	0	0	19	25	28
+304	evoDFRNN_Predict_Stock_0005	0	0	28	34	37
+305	evoFGRNN_Predict_Stock_0941	0	0	10	16	19
+306	evoFGRNN_Predict_Stock_1288	0	0	19	25	28
+307	evoFGRNN_Predict_Stock_0005	0	0	28	34	37
+308	evoDFGRNN_Predict_Stock_0941	0	0	10	16	19
+309	evoDFGRNN_Predict_Stock_1288	0	0	19	25	28
+310	evoDFGRNN_Predict_Stock_0005	0	0	28	34	37
+311	evoBFRNN_Predict_Stock_0941	0	0	10	16	19
+312	evoBFRNN_Predict_Stock_1288	0	0	19	25	28
+313	evoBFRNN_Predict_Stock_0005	0	0	28	34	37
+314	evoBDFRNN_Predict_Stock_0941	0	0	10	16	19
+315	evoBDFRNN_Predict_Stock_1288	0	0	19	25	28
+316	evoBDFRNN_Predict_Stock_0005	0	0	28	34	37
+317	evoBFGRNN_Predict_Stock_0941	0	0	10	16	19
+318	evoBFGRNN_Predict_Stock_1288	0	0	19	25	28
+319	evoBFGRNN_Predict_Stock_0005	0	0	28	34	37
+320	evoBDFGRNN_Predict_Stock_0941	0	0	10	16	19
+321	evoBDFGRNN_Predict_Stock_1288	0	0	19	25	28
+322	evoBDFGRNN_Predict_Stock_0005	0	0	28	34	37
+323	evoFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+324	evoFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+325	evoFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+326	evoFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+327	evoFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+328	evoFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+329	evoFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+330	evoFRNN_Predict_TimeSeries_traffic	0	0
+331	evoDFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+332	evoDFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+333	evoDFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+334	evoDFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+335	evoDFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+336	evoDFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+337	evoDFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+338	evoDFRNN_Predict_TimeSeries_traffic	0	0
+339	evoFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+340	evoFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+341	evoFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+342	evoFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+343	evoFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+344	evoFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+345	evoFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+346	evoFGRNN_Predict_TimeSeries_traffic	0	0
+347	evoDFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+348	evoDFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+349	evoDFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+350	evoDFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+351	evoDFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+352	evoDFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+353	evoDFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+354	evoDFGRNN_Predict_TimeSeries_traffic	0	0
+355	evoBFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+356	evoBFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+357	evoBFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+358	evoBFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+359	evoBFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+360	evoBFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+361	evoBFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+362	evoBFRNN_Predict_TimeSeries_traffic	0	0
+363	evoBDFRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+364	evoBDFRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+365	evoBDFRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+366	evoBDFRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+367	evoBDFRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+368	evoBDFRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+369	evoBDFRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+370	evoBDFRNN_Predict_TimeSeries_traffic	0	0
+371	evoBFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+372	evoBFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+373	evoBFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+374	evoBFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+375	evoBFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+376	evoBFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+377	evoBFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+378	evoBFGRNN_Predict_TimeSeries_traffic	0	0
+379	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi2	0	0
+380	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi3	0	0
+381	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi4	0	0
+382	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi5	0	0
+383	evoBDFGRNN_Predict_TimeSeries_hungaryChickenpox	0	0
+384	evoBDFGRNN_Predict_TimeSeries_SML2010-DATA-1	0	0
+385	evoBDFGRNN_Predict_TimeSeries_SML2010-DATA-2	0	0
+386	evoBDFGRNN_Predict_TimeSeries_traffic	0	0
+387	evoFRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+388	evoFRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+389	evoFRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+390	evoDFRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+391	evoDFRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+392	evoDFRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+393	evoFGRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+394	evoFGRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+395	evoFGRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+396	evoDFGRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+397	evoDFGRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+398	evoDFGRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+399	evoBFRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+400	evoBFRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+401	evoBFRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+402	evoBDFRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+403	evoBDFRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+404	evoBDFRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+405	evoBFGRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+406	evoBFGRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+407	evoBFGRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+408	evoBDFGRNN_Predict_Stock_0941_flagT2_0	0	0	10	16	19
+409	evoBDFGRNN_Predict_Stock_1288_flagT2_0	0	0	19	25	28
+410	evoBDFGRNN_Predict_Stock_0005_flagT2_0	0	0	28	34	37
+411	evoFRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+412	evoFRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+413	evoFRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+414	evoFRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+415	evoFRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+416	evoFRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+417	evoFRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+418	evoFRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+419	evoDFRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+420	evoDFRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+421	evoDFRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+422	evoDFRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+423	evoDFRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+424	evoDFRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+425	evoDFRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+426	evoDFRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+427	evoFGRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+428	evoFGRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+429	evoFGRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+430	evoFGRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+431	evoFGRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+432	evoFGRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+433	evoFGRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+434	evoFGRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+435	evoDFGRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+436	evoDFGRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+437	evoDFGRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+438	evoDFGRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+439	evoDFGRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+440	evoDFGRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+441	evoDFGRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+442	evoDFGRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+443	evoBFRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+444	evoBFRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+445	evoBFRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+446	evoBFRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+447	evoBFRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+448	evoBFRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+449	evoBFRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+450	evoBFRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+451	evoBDFRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+452	evoBDFRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+453	evoBDFRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+454	evoBDFRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+455	evoBDFRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+456	evoBDFRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+457	evoBDFRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+458	evoBDFRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+459	evoBFGRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+460	evoBFGRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+461	evoBFGRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+462	evoBFGRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+463	evoBFGRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+464	evoBFGRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+465	evoBFGRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+466	evoBFGRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+467	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi2_flagT2_0	0	0
+468	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi3_flagT2_0	0	0
+469	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi4_flagT2_0	0	0
+470	evoBDFGRNN_Predict_TimeSeries_gnfuv-pi5_flagT2_0	0	0
+471	evoBDFGRNN_Predict_TimeSeries_hungaryChickenpox_flagT2_0	0	0
+472	evoBDFGRNN_Predict_TimeSeries_SML2010-DATA-1_flagT2_0	0	0
+473	evoBDFGRNN_Predict_TimeSeries_SML2010-DATA-2_flagT2_0	0	0
+474	evoBDFGRNN_Predict_TimeSeries_traffic_flagT2_0	0	0
+475	evoMobileSink_GEP_only_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+476	evoMobileSink_FRNN_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+477	evoMobileSink_FRNN_flagT2_0_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+478	evoMobileSink_GEP_only_GRID_10_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+479	evoMobileSink_FRNN_GRID_10_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+480	evoMobileSink_FRNN_flagT2_0_GRID_10_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+481	evoMobileSink_GEP_only_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+482	evoMobileSink_FRNN_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+483	evoMobileSink_FRNN_flagT2_0_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+484	evoMobileSink_GEP_only_GRID_10_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+485	evoMobileSink_FRNN_GRID_10_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+486	evoMobileSink_FRNN_flagT2_0_GRID_10_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+487	evoMobileSink_GEP_only_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+488	evoMobileSink_FRNN_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+489	evoMobileSink_FRNN_flagT2_0_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+490	evoMobileSink_GEP_only_GRID_10_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+491	evoMobileSink_FRNN_GRID_10_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+492	evoMobileSink_FRNN_flagT2_0_GRID_10_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+493	evoMobileSink_GEP_only_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+494	evoMobileSink_FRNN_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+495	evoMobileSink_FRNN_flagT2_0_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+496	evoMobileSink_GEP_only_GRID_10_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+497	evoMobileSink_FRNN_GRID_10_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+498	evoMobileSink_FRNN_flagT2_0_GRID_10_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+499	evoMobileSink_GEP_only_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+500	evoMobileSink_FRNN_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+501	evoMobileSink_FRNN_flagT2_0_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+502	evoMobileSink_GEP_only_GRID_10_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+503	evoMobileSink_FRNN_GRID_10_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+504	evoMobileSink_FRNN_flagT2_0_GRID_10_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+505	evoMobileSink_GEP_only_NumSINK_5_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+506	evoMobileSink_FRNN_NumSINK_5_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+507	evoMobileSink_FRNN_flagT2_0_NumSINK_5_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+508	evoMobileSink_GEP_only_GRID_10_NumSINK_5_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+509	evoMobileSink_FRNN_GRID_10_NumSINK_5_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+510	evoMobileSink_FRNN_flagT2_0_GRID_10_NumSINK_5_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+511	evoMobileSink_FRNN_DepthR_1_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+512	evoMobileSink_FRNN_DepthR_2_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+513	evoMobileSink_FRNN_DepthR_1_GRID_10_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+514	evoMobileSink_FRNN_DepthR_2_GRID_10_NumSINK_1_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+515	evoMobileSink_FRNN_DepthR_1_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+516	evoMobileSink_FRNN_DepthR_2_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+517	evoMobileSink_FRNN_DepthR_1_GRID_10_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+518	evoMobileSink_FRNN_DepthR_2_GRID_10_NumSINK_2_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+519	evoMobileSink_FRNN_DepthR_1_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+520	evoMobileSink_FRNN_DepthR_2_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+521	evoMobileSink_FRNN_DepthR_1_GRID_10_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+522	evoMobileSink_FRNN_DepthR_2_GRID_10_NumSINK_5_fAdaptTHrn_0_PosType_0_dMove_50	0	0
+523	evoMobileSink_FRNN_DepthR_1_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+524	evoMobileSink_FRNN_DepthR_2_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+525	evoMobileSink_FRNN_DepthR_1_GRID_10_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+526	evoMobileSink_FRNN_DepthR_2_GRID_10_NumSINK_1_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+527	evoMobileSink_FRNN_DepthR_1_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0
+528	evoMobileSink_FRNN_DepthR_2_NumSINK_2_fAdaptTHrn_1_PosType_0_dMove_50	0	0

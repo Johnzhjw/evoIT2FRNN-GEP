@@ -2,6 +2,11 @@
 
 void xor_remVars_switch(int iS, int iD)
 {
+#ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
+    MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+    if(st_MPI_p.mpi_rank == 0) printf("xor_remVars_switch(%d, %d, ind_sub); \n", iS, iD);
+#endif
     int nPop = st_global_p.nPop;
     int nPop_mine = st_global_p.nPop_mine;
     int nDim = st_global_p.nDim;
@@ -51,6 +56,11 @@ void xor_remVars_switch(int iS, int iD)
         } else {
             selectSamples(nPop_candid_all, iS, -1, -1, &r1, NULL, NULL, NULL, NULL);
         }
+#ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
+        MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+        if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
         //
         do {
             if(type_join_xor == JOIN_XOR_UTILITY) {
@@ -64,6 +74,11 @@ void xor_remVars_switch(int iS, int iD)
                 selectSamples(nPop_candid_all, iS, r1, -1, &r2, NULL, NULL, NULL, NULL);
             }
         } while(r2 == iS || r2 == r1);
+#ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
+        MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+        if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
         break;
     case XOR_REMVARS_XOR_POP:
         selectSamples(nPop_candid_all, iS, -1, -1, &r1, &r2, NULL, NULL, NULL);
@@ -122,9 +137,19 @@ void xor_remVars_switch(int iS, int iD)
             if((int)p1[i])                     n_feat_p1++;
         }
         if((n_feat_p0 + n_feat_p1) == 2 * n_common) {
+#ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
+            MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+            if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
             rate = -1;
         } else {
             rate = (double)(n_feat_p0 - n_common) / (n_feat_p0 + n_feat_p1 - 2 * n_common);
+#ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
+            MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+            if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
         }
         rate_Commonality[iD] = rate;
     }
@@ -134,6 +159,11 @@ void xor_remVars_switch(int iS, int iD)
         LeNet_xor(pCurrent, p1, p2, pTrail, tmp_CR);
     } else {
         if(commonality_xor_remvar_tag == FLAG_OFF) {
+#ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
+            MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+            if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
             for(i = 0; i < nDim; i++) {
                 if(table_mine_flag[i]) continue;
                 if(flip_r(tmp_CR)) {
@@ -144,7 +174,17 @@ void xor_remVars_switch(int iS, int iD)
                     pTrail[i] = p2[i];
                 }
             }
+#ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
+            MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+            if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
         } else {
+#ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
+            MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+            if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
             for(i = 0; i < nDim; i++) {
                 if(table_mine_flag[i]) continue;
                 if(types_var_all[i] != VAR_BINARY) {
@@ -172,6 +212,11 @@ void xor_remVars_switch(int iS, int iD)
                     }
                 }
             }
+#ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
+            MPI_Barrier(st_MPI_p.comm_master_subPop_popScope);
+            if(st_MPI_p.mpi_rank == 0) printf("%s: xor_remVars_switch(%d, %d, ind_sub); \n", AT, iS, iD);
+#endif
         }
     }
 

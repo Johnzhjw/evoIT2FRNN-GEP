@@ -436,7 +436,6 @@ void collectDecompositionArchiveBeyondPop(int algoMechType)
         MPI_Abort(MPI_COMM_WORLD, MY_ERROR_NO_SUCH_ALGO_MECH);
     }
     st_archive_p.cnArch = nPop;
-    int i, j;
     int the_rank, the_size;
     MPI_Comm the_comm;
     if(st_ctrl_p.flag_multiPop && st_MPI_p.color_master_pop) {

@@ -115,6 +115,6 @@ void frnn_Predict_FRNN_free(frnn_MOP_Predict_FRNN* frnn);
 void frnn_Predict_FRNN_init(frnn_MOP_Predict_FRNN* frnn, double* x, int mode);
 void ff_frnn_Predict_FRNN(frnn_MOP_Predict_FRNN* frnn, MY_FLT_TYPE* valIn, MY_FLT_TYPE* valOut,
                           MY_FLT_TYPE** inputConsequenceNode);
-void statistics_MOP_Predict_FRNN();
+void statistics_MOP_Predict_FRNN(FILE* fpt);
 
 #endif

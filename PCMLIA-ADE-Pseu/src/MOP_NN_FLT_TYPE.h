@@ -5,6 +5,6 @@
 //#define CHECK_FINITE !_finite
 #define CHECK_INVALID(x) (isinf(x)||isnan(x))
 
-#define UTILIZE_MKL_LAPACKE_IN_MOPS_LINUX_ONLY
+//#define UTILIZE_MKL_LAPACKE_IN_MOPS_LINUX_ONLY
 
 #endif

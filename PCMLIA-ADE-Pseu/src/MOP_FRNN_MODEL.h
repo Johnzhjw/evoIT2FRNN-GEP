@@ -1162,6 +1162,7 @@ extern int     seed_FRNN_MODEL;
 extern long    rnd_uni_init_FRNN_MODEL;
 
 MY_FLT_TYPE rndreal_FRNN_MODEL(MY_FLT_TYPE low, MY_FLT_TYPE high);
+MY_FLT_TYPE gaussrand_FRNN_MODEL(MY_FLT_TYPE a = 0.0, MY_FLT_TYPE b = 1.0);
 int rnd_FRNN_MODEL(int low, int high);
 void shuffle_FRNN_MODEL(int* x, int size);
 

@@ -25,11 +25,11 @@
 #define TAG_INVA_MOP_PREDICT_FRNN -1
 
 //////////////////////////////////////////////////////////////////////////
-#define MAX_DATA_LEN_MOP_PREDICT_FRNN 4200
-#define MAX_ATTR_NUM 40
+#define MAX_DATA_LEN_MOP_PREDICT_FRNN 10000
+#define MAX_ATTR_NUM 64
 
 //////////////////////////////////////////////////////////////////////////
-#define THRESHOLD_NUM_ROUGH_NODES 3
+#define THRESHOLD_NUM_ROUGH_NODES 1
 
 //////////////////////////////////////////////////////////////////////////
 enum ENUM_DATA_INTERVAL_TYPE {
@@ -70,8 +70,14 @@ char prob_name_MOP_Predict_FRNN[128];
 int tag_classification_MOP_Predict_FRNN;
 int num_class_MOP_Predict_FRNN;
 
+int num_in__predict_MOP_Predict_FRNN;
+int ind_in__predict_MOP_Predict_FRNN[MAX_ATTR_NUM];
 int num_out_predict_MOP_Predict_FRNN;
 int ind_out_predict_MOP_Predict_FRNN[MAX_ATTR_NUM];
+
+int flag_multi_in_cnsq_MOP_Predict_FRNN;
+int flag_fuse_in_cnsq_MOP_Predict_FRNN;
+int type_frnn_cnsq_MOP_Predict_FRNN;
 
 //////////////////////////////////////////////////////////////////////////
 #define DATA_MIN_MOP_Predict_FRNN 0
@@ -80,14 +86,16 @@ int ind_out_predict_MOP_Predict_FRNN[MAX_ATTR_NUM];
 #define DATA_STD_MOP_Predict_FRNN 3
 int numAttr; // not including the label for classification
 double allData_MOP_Predict_FRNN[MAX_ATTR_NUM][MAX_DATA_LEN_MOP_PREDICT_FRNN];
-double trainData_MOP_Predict_FRNN[MAX_ATTR_NUM][MAX_DATA_LEN_MOP_PREDICT_FRNN];
-double testData_MOP_Predict_FRNN[MAX_ATTR_NUM][MAX_DATA_LEN_MOP_PREDICT_FRNN];
 double trainStat_MOP_Predict_FRNN[MAX_ATTR_NUM][4];
+double trainFact_MOP_Predict_FRNN[MAX_ATTR_NUM];
 double testStat_MOP_Predict_FRNN[MAX_ATTR_NUM][4];
 int allDataSize_MOP_Predict_FRNN = 0;
 int trainDataSize_MOP_Predict_FRNN = 0;
 int testDataSize_MOP_Predict_FRNN = 0;
-#define NORMALIZE_MOP_Predict_FRNN
+int NORMALIZE_Z_SCORE_MOP_Predict_FRNN = 0;
+int NORMALIZE_MIN_MAX_MOP_Predict_FRNN = 1;
+int NORMALIZE_MOP_Predict_FRNN = -1;
+int flag_T2_MOP_Predict_FRNN = -1;
 
 int  repNum_MOP_Predict_FRNN;
 int  repNo_MOP_Predict_FRNN;
@@ -119,6 +127,7 @@ static double rnd_uni_Predict_FRNN(long* idum);
 static int rnd_Predict_FRNN(int low, int high);
 static void shuffle_Predict_FRNN(int* x, int size);
 static void trimLine_MOP_Predict_FRNN(char line[]);
+static int  get_setting_MOP_Predict_FRNN(char* wholestr, const char* candidstr, int& val);
 
 //////////////////////////////////////////////////////////////////////////
 void Initialize_MOP_Predict_FRNN(char* pro, int curN, int numN, int trainNo, int testNo, int endNo, int my_rank)
@@ -143,6 +152,17 @@ void Initialize_MOP_Predict_FRNN(char* pro, int curN, int numN, int trainNo, int
     repNo_MOP_Predict_FRNN = curN;
     repNum_MOP_Predict_FRNN = numN;
     //
+    flag_multi_in_cnsq_MOP_Predict_FRNN = FLAG_STATUS_OFF;
+    flag_fuse_in_cnsq_MOP_Predict_FRNN = FLAG_STATUS_OFF;
+    get_setting_MOP_Predict_FRNN(pro, "FuseF", flag_fuse_in_cnsq_MOP_Predict_FRNN);
+    NORMALIZE_MOP_Predict_FRNN = NORMALIZE_MIN_MAX_MOP_Predict_FRNN;
+    get_setting_MOP_Predict_FRNN(pro, "Tnorm", NORMALIZE_MOP_Predict_FRNN);
+    flag_T2_MOP_Predict_FRNN = 1;
+    get_setting_MOP_Predict_FRNN(pro, "flagT2", flag_T2_MOP_Predict_FRNN);
+    type_frnn_cnsq_MOP_Predict_FRNN = FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_ADAPT;
+    get_setting_MOP_Predict_FRNN(pro, "Tcnsq", type_frnn_cnsq_MOP_Predict_FRNN);
+    num_class_MOP_Predict_FRNN = 0;
+    //
     char filename[MAX_STR_LEN_MOP_Predict_FRNN];
     if(strstr(pro, "Stock_")) {
         tag_classification_MOP_Predict_FRNN = 0;
@@ -159,15 +179,31 @@ void Initialize_MOP_Predict_FRNN(char* pro, int curN, int numN, int trainNo, int
         tag_classification_MOP_Predict_FRNN = 0;
         char* ret = strstr(pro, "TimeSeries_");
         ret += strlen("TimeSeries_");
-        sprintf(filename, "../Data_all/UCI_Data/%s", ret);
+        char tmp_str[MAX_STR_LEN_MOP_Predict_FRNN];
+        sprintf(tmp_str, "%s", ret);
+        for(int i = 0; i < MAX_STR_LEN_MOP_Predict_FRNN; i++) {
+            if(tmp_str[i] == '_') {
+                tmp_str[i] = '\0';
+                break;
+            }
+        }
+        sprintf(filename, "../Data_all/UCI_Data/%s", tmp_str);
         readData_general_MOP_Predict_FRNN(filename, tag_classification_MOP_Predict_FRNN);
     } else {
         printf("\n%s(%d): Unknown problem name ~ %s, the dataset cannot be found, exiting...\n",
                __FILE__, __LINE__, pro);
         exit(-9124);
     }
+    if(tag_classification_MOP_Predict_FRNN && num_class_MOP_Predict_FRNN == 0) {
+        printf("\n%s(%d): The number of classes is 0 for classification, the data file should include the number of classes, exiting...\n",
+               __FILE__, __LINE__);
+        exit(-91224);
+    }
+    num_in__predict_MOP_Predict_FRNN = numAttr;
+    for(int i = 0; i < numAttr; i++) ind_in__predict_MOP_Predict_FRNN[i] = i;
     if(tag_classification_MOP_Predict_FRNN) {
         num_out_predict_MOP_Predict_FRNN = 1;
+        flag_multi_in_cnsq_MOP_Predict_FRNN = FLAG_STATUS_ON;
     } else {
         if(strstr(pro, "Stock_")) {
             num_out_predict_MOP_Predict_FRNN = 1;
@@ -217,9 +253,8 @@ void Initialize_MOP_Predict_FRNN(char* pro, int curN, int numN, int trainNo, int
     else if(d_intv_t_MOP_PREDICT_FRNN == D_INTV_T_DAILY)
         p_m_MOP_PREDICT_FRNN = PARA_M_DAILY;
     // Normalization
-#ifdef NORMALIZE_MOP_Predict_FRNN
+    for(int i = 0; i < MAX_ATTR_NUM; i++) trainFact_MOP_Predict_FRNN[i] = 1;
     normalizeData_MOP_Predict_FRNN();
-#endif
     //////////////////////////////////////////////////////////////////////////
 #if CURRENT_PROB_MOP_PREDICT_FRNN == STOCK_TRADING_MOP_PREDICT_FRNN
     genTradingLabel_MOP_Predict_FRNN();
@@ -291,6 +326,37 @@ void Initialize_MOP_Predict_FRNN(char* pro, int curN, int numN, int trainNo, int
         printf("\n%s(%d): Unknown problem name ~ %s, exiting...\n",
                __FILE__, __LINE__, pro);
         exit(-91284);
+    }
+    if(frnn_MOP_Predict->tag_multiKindInput == FLAG_STATUS_OFF) {
+        num_in__predict_MOP_Predict_FRNN = 1;
+        ind_in__predict_MOP_Predict_FRNN[0] = 0;
+    }
+    if(flag_fuse_in_cnsq_MOP_Predict_FRNN == FLAG_STATUS_ON)
+        flag_multi_in_cnsq_MOP_Predict_FRNN = FLAG_STATUS_ON;
+    if(flag_fuse_in_cnsq_MOP_Predict_FRNN == FLAG_STATUS_ON &&
+       tag_classification_MOP_Predict_FRNN) {
+        printf("%s(%d): For the classification problem, there is no need to set feature fusing, exiting...\n",
+               __FILE__, __LINE__);
+        exit(-972849);
+    }
+    if(flag_fuse_in_cnsq_MOP_Predict_FRNN == FLAG_STATUS_ON) {
+        // remove the target ind in the input features
+        int i = 0;
+        while(i < num_in__predict_MOP_Predict_FRNN) {
+            for(int o = 0; o < num_out_predict_MOP_Predict_FRNN; o++) {
+                if(ind_in__predict_MOP_Predict_FRNN[i] == ind_out_predict_MOP_Predict_FRNN[o]) {
+                    num_in__predict_MOP_Predict_FRNN--;
+                    if(num_in__predict_MOP_Predict_FRNN <= 0) {
+                        printf("%s(%d): There are no remaining input features, exiting...\n", __FILE__, __LINE__);
+                        exit(-97281);
+                    }
+                    for(int ii = i; ii < num_in__predict_MOP_Predict_FRNN; ii++) {
+                        ind_in__predict_MOP_Predict_FRNN[ii] = ind_in__predict_MOP_Predict_FRNN[ii + 1];
+                    }
+                }
+            }
+            i++;
+        }
     }
     frnn_Predict_FRNN_setup(frnn_MOP_Predict);
     //
@@ -416,27 +482,27 @@ int CheckLimits_MOP_Predict_FRNN(double* x, int nx)
 void Fitness_MOP_Predict_FRNN(double* individual, double* fitness, double* constrainV, int nx, int M)
 {
     ff_Predict_FRNN_c(individual, TRAIN_TAG_MOP_PREDICT_FRNN);
-    double f_simp = simplicity_MOP_Predict_FRNN();
     //
 #if CURRENT_PROB_MOP_PREDICT_FRNN == PREDICT_CLASSIFY_MOP_PREDICT_FRNN
     if(!tag_classification_MOP_Predict_FRNN) {
-        fitness[0] = sqrt(frnn_MOP_Predict->sum_wrong / frnn_MOP_Predict->sum_all) +
-                     total_penalty_MOP_Predict_FRNN;
+        fitness[0] = sqrt(frnn_MOP_Predict->sum_wrong / frnn_MOP_Predict->sum_all);
     } else {
         MY_FLT_TYPE mean_prc = 0;
         get_Evaluation_Indicators_MOP_Predict_FRNN(num_class_MOP_Predict_FRNN,
                 frnn_MOP_Predict->N_TP, frnn_MOP_Predict->N_FP, frnn_MOP_Predict->N_TN, frnn_MOP_Predict->N_FN,
                 frnn_MOP_Predict->N_wrong, frnn_MOP_Predict->N_sum,
                 &mean_prc, NULL, NULL, NULL, NULL, NULL);
-        fitness[0] = 1 - mean_prc + total_penalty_MOP_Predict_FRNN;
+        fitness[0] = 1 - mean_prc;
     }
 #else
-    fitness[0] = get_profit_MOP_Predict_FRNN(TRAIN_TAG_MOP_PREDICT_FRNN) +
-                 total_penalty_MOP_Predict_FRNN;
+    fitness[0] = get_profit_MOP_Predict_FRNN(TRAIN_TAG_MOP_PREDICT_FRNN);
 #endif
-    fitness[1] = f_simp + total_penalty_MOP_Predict_FRNN;
+    fitness[1] = simplicity_MOP_Predict_FRNN();
     //
-    fitness[2] = generality_MOP_Predict_FRNN() + total_penalty_MOP_Predict_FRNN;
+    fitness[2] = generality_MOP_Predict_FRNN();
+    //
+    for(int i = 0; i < NOBJ_MOP_Predict_FRNN; i++)
+        fitness[i] += total_penalty_MOP_Predict_FRNN;
     //
     return;
 }
@@ -444,27 +510,27 @@ void Fitness_MOP_Predict_FRNN(double* individual, double* fitness, double* const
 void Fitness_MOP_Predict_FRNN_test(double* individual, double* fitness)
 {
     ff_Predict_FRNN_c(individual, TEST_TAG_MOP_PREDICT_FRNN);
-    double f_simp = simplicity_MOP_Predict_FRNN();
     //
 #if CURRENT_PROB_MOP_PREDICT_FRNN == PREDICT_CLASSIFY_MOP_PREDICT_FRNN
     if(!tag_classification_MOP_Predict_FRNN) {
-        fitness[0] = sqrt(frnn_MOP_Predict->sum_wrong / frnn_MOP_Predict->sum_all) +
-                     total_penalty_MOP_Predict_FRNN;
+        fitness[0] = sqrt(frnn_MOP_Predict->sum_wrong / frnn_MOP_Predict->sum_all);
     } else {
         MY_FLT_TYPE mean_prc = 0;
         get_Evaluation_Indicators_MOP_Predict_FRNN(num_class_MOP_Predict_FRNN,
                 frnn_MOP_Predict->N_TP, frnn_MOP_Predict->N_FP, frnn_MOP_Predict->N_TN, frnn_MOP_Predict->N_FN,
                 frnn_MOP_Predict->N_wrong, frnn_MOP_Predict->N_sum,
                 &mean_prc, NULL, NULL, NULL, NULL, NULL);
-        fitness[0] = mean_prc + total_penalty_MOP_Predict_FRNN;
+        fitness[0] = mean_prc;
     }
 #else
-    fitness[0] = get_profit_MOP_Predict_FRNN(TEST_TAG_MOP_PREDICT_FRNN) +
-                 total_penalty_MOP_Predict_FRNN;
+    fitness[0] = get_profit_MOP_Predict_FRNN(TEST_TAG_MOP_PREDICT_FRNN);
 #endif
-    fitness[1] = f_simp + total_penalty_MOP_Predict_FRNN;
+    fitness[1] = simplicity_MOP_Predict_FRNN();
     //
-    fitness[2] = generality_MOP_Predict_FRNN() + total_penalty_MOP_Predict_FRNN;
+    fitness[2] = generality_MOP_Predict_FRNN();
+    //
+    for(int i = 0; i < NOBJ_MOP_Predict_FRNN; i++)
+        fitness[i] += total_penalty_MOP_Predict_FRNN;
     //
     return;
 }
@@ -477,15 +543,18 @@ static void ff_Predict_FRNN_c(double* individual, int tag_train_test)
     } else {
         num_in = testDataSize_MOP_Predict_FRNN;
     }
-
+    //
 #if CURRENT_PROB_MOP_PREDICT_FRNN == PREDICT_CLASSIFY_MOP_PREDICT_FRNN
     int num_sample = num_in - (frnn_MOP_Predict->numInput - 1) * frnn_MOP_Predict->lenGap - 1 -
                      frnn_MOP_Predict->numOutput * frnn_MOP_Predict->lenGap + 1;
-    if(tag_classification_MOP_Predict_FRNN) {
+    if(tag_train_test == TEST_TAG_MOP_PREDICT_FRNN)
+        num_sample = num_in - (frnn_MOP_Predict->numOutput - 1) * frnn_MOP_Predict->lenGap;
+    if(tag_classification_MOP_Predict_FRNN)
         num_sample = num_in;
-    }
 #else
     int num_sample = num_in - frnn_MOP_Predict->numInput + 1;
+    if(tag_train_test == TEST_TAG_MOP_PREDICT_FRNN)
+        num_sample = num_in;
 #endif
     frnn_MOP_Predict->sum_all = 0;
     frnn_MOP_Predict->sum_wrong = 0;
@@ -543,13 +612,26 @@ static void ff_Predict_FRNN_c(double* individual, int tag_train_test)
     //
     for(int m = 0; m < num_sample; m++) {
         for(int n = 0; n < frnn_MOP_Predict->num_multiKindInput; n++) {
+            int t_i = ind_in__predict_MOP_Predict_FRNN[n];
             int tmp_ind_os = n * frnn_MOP_Predict->numInput;
-            if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN)
-                for(int i = 0; i < frnn_MOP_Predict->numInput; i++)
-                    valIn[tmp_ind_os + i] = trainData_MOP_Predict_FRNN[n][m + i * frnn_MOP_Predict->lenGap];
-            else
-                for(int i = 0; i < frnn_MOP_Predict->numInput; i++)
-                    valIn[tmp_ind_os + i] = testData_MOP_Predict_FRNN[n][m + i * frnn_MOP_Predict->lenGap];
+            if(tag_classification_MOP_Predict_FRNN) {
+                if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN)
+                    for(int i = 0; i < frnn_MOP_Predict->numInput; i++)
+                        valIn[tmp_ind_os + i] = allData_MOP_Predict_FRNN[t_i][m + i * frnn_MOP_Predict->lenGap];
+                else
+                    for(int i = 0; i < frnn_MOP_Predict->numInput; i++)
+                        valIn[tmp_ind_os + i] =
+                            allData_MOP_Predict_FRNN[t_i][trainDataSize_MOP_Predict_FRNN + m + i * frnn_MOP_Predict->lenGap];
+            } else {
+                if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN)
+                    for(int i = 0; i < frnn_MOP_Predict->numInput; i++)
+                        valIn[tmp_ind_os + i] = allData_MOP_Predict_FRNN[t_i][m + i * frnn_MOP_Predict->lenGap];
+                else
+                    for(int i = 0; i < frnn_MOP_Predict->numInput; i++)
+                        valIn[tmp_ind_os + i] =
+                            allData_MOP_Predict_FRNN[t_i][trainDataSize_MOP_Predict_FRNN + m + i * frnn_MOP_Predict->lenGap -
+                                                          (frnn_MOP_Predict->numInput - 1) * frnn_MOP_Predict->lenGap - 1];
+            }
         }
         ff_frnn_Predict_FRNN(frnn_MOP_Predict, valIn, valOut, NULL);
 #ifdef UTILIZE_MKL_LAPACKE_IN_MOPS_LINUX_ONLY
@@ -579,23 +661,25 @@ static void ff_Predict_FRNN_c(double* individual, int tag_train_test)
         if(!tag_classification_MOP_Predict_FRNN) {
             MY_FLT_TYPE tmp_dif1 = 0.0;
             for(int n = 0; n < frnn_MOP_Predict->num_multiKindOutput; n++) {
-                int tmp_ind = ind_out_predict_MOP_Predict_FRNN[n];
+                int tmp_o = ind_out_predict_MOP_Predict_FRNN[n];
                 if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN)
-                    true_out = &trainData_MOP_Predict_FRNN[tmp_ind][m + (frnn_MOP_Predict->numInput - 1) * frnn_MOP_Predict->lenGap + 1];
+                    true_out = &allData_MOP_Predict_FRNN[tmp_o][m +
+                               frnn_MOP_Predict->numInput * frnn_MOP_Predict->lenGap];
                 else
-                    true_out = &testData_MOP_Predict_FRNN[tmp_ind][m + (frnn_MOP_Predict->numInput - 1) * frnn_MOP_Predict->lenGap + 1];
+                    true_out = &allData_MOP_Predict_FRNN[tmp_o][trainDataSize_MOP_Predict_FRNN + m];
                 for(int i = 0; i < frnn_MOP_Predict->numOutput; i++) {
-                    tmp_dif1 += (cur_out[n * frnn_MOP_Predict->numOutput + i] - true_out[(i + 1) * frnn_MOP_Predict->lenGap - 1]) *
-                                (cur_out[n * frnn_MOP_Predict->numOutput + i] - true_out[(i + 1) * frnn_MOP_Predict->lenGap - 1]);
+                    tmp_dif1 += (cur_out[n * frnn_MOP_Predict->numOutput + i] - true_out[i * frnn_MOP_Predict->lenGap]) *
+                                (cur_out[n * frnn_MOP_Predict->numOutput + i] - true_out[i * frnn_MOP_Predict->lenGap]) *
+                                trainFact_MOP_Predict_FRNN[tmp_o];
                 }
             }
             frnn_MOP_Predict->sum_all++;
             frnn_MOP_Predict->sum_wrong += tmp_dif1 / frnn_MOP_Predict->numOutput / frnn_MOP_Predict->num_multiKindOutput;
         } else {
             if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN)
-                true_out = &trainData_MOP_Predict_FRNN[numAttr][m];
+                true_out = &allData_MOP_Predict_FRNN[numAttr][m];
             else
-                true_out = &testData_MOP_Predict_FRNN[numAttr][m];
+                true_out = &allData_MOP_Predict_FRNN[numAttr][trainDataSize_MOP_Predict_FRNN + m];
             int cur_label = 0;
             MY_FLT_TYPE cur_val = valOut[0];
             for(int j = 1; j < frnn_MOP_Predict->numOutput; j++) {
@@ -630,12 +714,14 @@ static void ff_Predict_FRNN_c(double* individual, int tag_train_test)
                 cur_label = j;
             }
         }
-        frnn_MOP_Predict->trading_actions[m + frnn_MOP_Predict->numInput - 1] = cur_label;
         true_label = 0;
-        if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN)
+        if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN) {
+            frnn_MOP_Predict->trading_actions[m + frnn_MOP_Predict->numInput - 1] = cur_label;
             true_label = train_trading_label_MOP_Predict_FRNN[2][m + frnn_MOP_Predict->numInput - 1];
-        else
-            true_label = test_trading_label_MOP_Predict_FRNN[2][m + frnn_MOP_Predict->numInput - 1];
+        } else {
+            frnn_MOP_Predict->trading_actions[m] = cur_label;
+            true_label = test_trading_label_MOP_Predict_FRNN[2][m];
+        }
         for(int j = 0; j < frnn_MOP_Predict->numOutput; j++) {
             if(j == cur_label && j == true_label) frnn_MOP_Predict->N_TP[j]++;
             if(j == cur_label && j != true_label) frnn_MOP_Predict->N_FP[j]++;
@@ -654,18 +740,19 @@ static void ff_Predict_FRNN_c(double* individual, int tag_train_test)
 #if CURRENT_PROB_MOP_PREDICT_FRNN == PREDICT_CLASSIFY_MOP_PREDICT_FRNN
         if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN) {
             for(int n = 0; n < frnn_MOP_Predict->num_multiKindOutput; n++) {
-                int tmp_ind = ind_out_predict_MOP_Predict_FRNN[n];
+                int tmp_o = ind_out_predict_MOP_Predict_FRNN[n];
                 if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN)
-                    true_out = &trainData_MOP_Predict_FRNN[tmp_ind][m + (frnn_MOP_Predict->numInput - 1) * frnn_MOP_Predict->lenGap + 1];
+                    true_out = &allData_MOP_Predict_FRNN[tmp_o][m +
+                               frnn_MOP_Predict->numInput * frnn_MOP_Predict->lenGap];
                 else
-                    true_out = &testData_MOP_Predict_FRNN[tmp_ind][m + (frnn_MOP_Predict->numInput - 1) * frnn_MOP_Predict->lenGap + 1];
+                    true_out = &allData_MOP_Predict_FRNN[tmp_o][trainDataSize_MOP_Predict_FRNN + m];
                 for(int i = 0; i < frnn_MOP_Predict->numOutput; i++) {
                     for(int j = 0; j < frnn_MOP_Predict->OL->numInput; j++) {
                         int ind_cur = tmp_offset_samp * frnn_MOP_Predict->OL->numInput + j;
                         matA[n][i][ind_cur] = frnn_MOP_Predict->OL->valInputFinal[n * frnn_MOP_Predict->numOutput + i][j];
                     }
                     if(!tag_classification_MOP_Predict_FRNN)
-                        matB[n][i][tmp_offset_samp] = true_out[(i + 1) * frnn_MOP_Predict->lenGap - 1];
+                        matB[n][i][tmp_offset_samp] = true_out[i * frnn_MOP_Predict->lenGap];
                     else if(i == true_label)
                         matB[n][i][tmp_offset_samp] = 1;
                     else
@@ -799,10 +886,12 @@ static void ff_Predict_FRNN_c(double* individual, int tag_train_test)
             if(!tag_classification_MOP_Predict_FRNN) {
                 MY_FLT_TYPE tmp_loss = 0.0;
                 for(int n = 0; n < frnn_MOP_Predict->num_multiKindOutput; n++) {
+                    int tmp_o = ind_out_predict_MOP_Predict_FRNN[n];
                     true_out = matB[n];
                     for(int i = 0; i < frnn_MOP_Predict->numOutput; i++)
                         tmp_loss += (cur_out[n * frnn_MOP_Predict->numOutput + i] - true_out[i][m]) *
-                                    (cur_out[n * frnn_MOP_Predict->numOutput + i] - true_out[i][m]);
+                                    (cur_out[n * frnn_MOP_Predict->numOutput + i] - true_out[i][m]) *
+                                    trainFact_MOP_Predict_FRNN[tmp_o];
                 }
                 frnn_MOP_Predict->sum_all++;
                 frnn_MOP_Predict->sum_wrong += tmp_loss / frnn_MOP_Predict->numOutput / frnn_MOP_Predict->num_multiKindOutput;
@@ -845,7 +934,11 @@ static void ff_Predict_FRNN_c(double* individual, int tag_train_test)
                     cur_label = j;
                 }
             }
-            frnn_MOP_Predict->trading_actions[m + frnn_MOP_Predict->numInput - 1] = cur_label;
+            if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN) {
+                frnn_MOP_Predict->trading_actions[m + frnn_MOP_Predict->numInput - 1] = cur_label;
+            } else {
+                frnn_MOP_Predict->trading_actions[m] = cur_label;
+            }
             int true_label = 0;
             MY_FLT_TYPE true_val = true_out[0][m];
             for(int j = 1; j < frnn_MOP_Predict->numOutput; j++) {
@@ -901,17 +994,15 @@ void Finalize_MOP_Predict_FRNN()
 //////////////////////////////////////////////////////////////////////////
 void frnn_Predict_FRNN_setup(frnn_MOP_Predict_FRNN* frnn)
 {
-    if(frnn->tag_multiKindInput == FLAG_STATUS_OFF) {
-        frnn->num_multiKindInput = 1;
-    } else {
-        frnn->num_multiKindInput = numAttr;
-#ifndef NORMALIZE_MOP_Predict_FRNN
-        printf("%s(%d): If different kinds of inputs are utilized, all inputs should be normalized, exiting...\n",
-               __FILE__, __LINE__)£»
-#endif
+    frnn->num_multiKindInput = num_in__predict_MOP_Predict_FRNN;
+    if(frnn->tag_multiKindInput == FLAG_STATUS_ON) {
+        if(NORMALIZE_MOP_Predict_FRNN != NORMALIZE_MIN_MAX_MOP_Predict_FRNN &&
+           NORMALIZE_MOP_Predict_FRNN != NORMALIZE_Z_SCORE_MOP_Predict_FRNN) {
+            printf("%s(%d): If different kinds of inputs are utilized, all inputs should be normalized, exiting...\n",
+                   __FILE__, __LINE__);
+            exit(-1759);
+        }
     }
-    if(tag_classification_MOP_Predict_FRNN)
-        frnn->num_multiKindInput = numAttr;
     //////////////////////////////////////////////////////////////////////////
     //
     frnn->numInput = 3;
@@ -931,6 +1022,7 @@ void frnn_Predict_FRNN_setup(frnn_MOP_Predict_FRNN* frnn)
     frnn->numOutput = numOutput;
     //
     int typeFuzzySet = FUZZY_INTERVAL_TYPE_II;
+    if(!flag_T2_MOP_Predict_FRNN) typeFuzzySet = FUZZY_SET_I;
     int typeRules = PRODUCT_INFERENCE_ENGINE;
     int typeInRuleCorNum = ONE_EACH_IN_TO_ONE_RULE; // MUL_EACH_IN_TO_ONE_RULE; //
     int typeTypeReducer = NIE_TAN_TYPE_REDUCER;// CENTER_OF_SETS_TYPE_REDUCER;
@@ -986,21 +1078,21 @@ void frnn_Predict_FRNN_setup(frnn_MOP_Predict_FRNN* frnn)
     frnn->typeCoding = tmp_typeCoding;
     //
     int numInputConsequenceNode = 0;
-#if FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_CUR == FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_FIXED
-    numInputConsequenceNode = 0;
-    consequenceNodeStatus = FIXED_CONSEQUENCE_CENTROID;
-    frnn->consequenceNodeStatus = consequenceNodeStatus;
-#elif FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_CUR == FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_ADAPT
-    if(!tag_classification_MOP_Predict_FRNN) {
-        numInputConsequenceNode = frnn->numInput;
+    if(type_frnn_cnsq_MOP_Predict_FRNN == FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_FIXED) {
+        numInputConsequenceNode = 0;
+        consequenceNodeStatus = FIXED_CONSEQUENCE_CENTROID;
+        frnn->consequenceNodeStatus = consequenceNodeStatus;
+    } else if(type_frnn_cnsq_MOP_Predict_FRNN == FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_ADAPT) {
+        if(flag_multi_in_cnsq_MOP_Predict_FRNN == FLAG_STATUS_OFF)
+            numInputConsequenceNode = frnn->numInput;
+        else
+            numInputConsequenceNode = frnn->numInput * frnn->num_multiKindInput;
         consequenceNodeStatus = ADAPTIVE_CONSEQUENCE_CENTROID;
         frnn->consequenceNodeStatus = consequenceNodeStatus;
-    }
-#endif
-    if(tag_classification_MOP_Predict_FRNN) {
-        numInputConsequenceNode = frnn->numInput * frnn->num_multiKindInput;
-        consequenceNodeStatus = ADAPTIVE_CONSEQUENCE_CENTROID;
-        frnn->consequenceNodeStatus = consequenceNodeStatus;
+    } else {
+        printf("%s(%d): Invalid ``type_frnn_cnsq_MOP_Predict_FRNN''-%d, exiting...\n",
+               __FILE__, __LINE__, type_frnn_cnsq_MOP_Predict_FRNN);
+        exit(-12759);
     }
     //
 #ifdef UTILIZE_MKL_LAPACKE_IN_MOPS_LINUX_ONLY
@@ -1027,13 +1119,16 @@ void frnn_Predict_FRNN_setup(frnn_MOP_Predict_FRNN* frnn)
     MY_FLT_TYPE* inputMin = (MY_FLT_TYPE*)calloc(frnn->numInput * frnn->num_multiKindInput, sizeof(MY_FLT_TYPE));
     MY_FLT_TYPE* inputMax = (MY_FLT_TYPE*)calloc(frnn->numInput * frnn->num_multiKindInput, sizeof(MY_FLT_TYPE));
     for(int i = 0; i < frnn->numInput * frnn->num_multiKindInput; i++) {
-#ifdef NORMALIZE_MOP_Predict_FRNN
-        inputMin[i] = -10;
-        inputMax[i] = 10;
-#else
-        inputMin[i] = 0;
-        inputMax[i] = 120;
-#endif
+        if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_MIN_MAX_MOP_Predict_FRNN) {
+            inputMin[i] = 0;
+            inputMax[i] = 1;
+        } else if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_Z_SCORE_MOP_Predict_FRNN) {
+            inputMin[i] = -10;
+            inputMax[i] = 10;
+        } else {
+            inputMin[i] = 0;
+            inputMax[i] = 120;
+        }
     }
     if(frnn->tag_GEP == FLAG_STATUS_ON) {
         frnn->num_GEP = frnn->numInput * frnn->num_multiKindInput;
@@ -1053,21 +1148,27 @@ void frnn_Predict_FRNN_setup(frnn_MOP_Predict_FRNN* frnn)
     if(frnn->tag_DIF == FLAG_STATUS_ON) {
         for(int n = 0; n < frnn->num_multiKindInput; n++) {
             int tmp_ind_os = n * frnn->numInput;
-#ifdef NORMALIZE_MOP_Predict_FRNN
-            inputMin[tmp_ind_os + 0] = -10;
-            inputMax[tmp_ind_os + 0] = 10;
-#else
-            inputMin[tmp_ind_os + 0] = 0;
-            inputMax[tmp_ind_os + 0] = 120;
-#endif
+            if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_MIN_MAX_MOP_Predict_FRNN) {
+                inputMin[tmp_ind_os + 0] = 0;
+                inputMax[tmp_ind_os + 0] = 1;
+            } else if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_Z_SCORE_MOP_Predict_FRNN) {
+                inputMin[tmp_ind_os + 0] = -10;
+                inputMax[tmp_ind_os + 0] = 10;
+            } else {
+                inputMin[tmp_ind_os + 0] = 0;
+                inputMax[tmp_ind_os + 0] = 120;
+            }
             for(int i = 1; i < frnn->numInput; i++) {
-#ifdef NORMALIZE_MOP_Predict_FRNN
-                inputMin[tmp_ind_os + i] = -10;
-                inputMax[tmp_ind_os + i] = 10;
-#else
-                inputMin[tmp_ind_os + i] = -10;
-                inputMax[tmp_ind_os + i] = 10;
-#endif
+                if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_MIN_MAX_MOP_Predict_FRNN) {
+                    inputMin[tmp_ind_os + i] = -1;
+                    inputMax[tmp_ind_os + i] = 1;
+                } else if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_Z_SCORE_MOP_Predict_FRNN) {
+                    inputMin[tmp_ind_os + i] = -10;
+                    inputMax[tmp_ind_os + i] = 10;
+                } else {
+                    inputMin[tmp_ind_os + i] = -10;
+                    inputMax[tmp_ind_os + i] = 10;
+                }
             }
         }
     }
@@ -1096,13 +1197,29 @@ void frnn_Predict_FRNN_setup(frnn_MOP_Predict_FRNN* frnn)
     MY_FLT_TYPE outputMin[MAX_OUT_NUM_MOP_Predict_FRNN];
     MY_FLT_TYPE outputMax[MAX_OUT_NUM_MOP_Predict_FRNN];
     for(int i = 0; i < frnn->numOutput * frnn->num_multiKindOutput; i++) {
-#ifdef NORMALIZE_MOP_Predict_FRNN
-        outputMin[i] = -10;
-        outputMax[i] = 10;
-#else
-        outputMin[i] = 0;
-        outputMax[i] = 120;
-#endif
+        if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_MIN_MAX_MOP_Predict_FRNN) {
+
+            outputMin[i] = 0;
+            outputMax[i] = 1;
+        } else if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_Z_SCORE_MOP_Predict_FRNN) {
+            outputMin[i] = -10;
+            outputMax[i] = 10;
+        } else {
+            outputMin[i] = 0;
+            outputMax[i] = 120;
+        }
+    }
+    for(int i = 0; i < frnn->numInput * frnn->num_multiKindInput; i++) {
+        if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_MIN_MAX_MOP_Predict_FRNN) {
+            inputMin[i] = 0;
+            inputMax[i] = 1;
+        } else if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_Z_SCORE_MOP_Predict_FRNN) {
+            inputMin[i] = -10;
+            inputMax[i] = 10;
+        } else {
+            inputMin[i] = 0;
+            inputMax[i] = 120;
+        }
     }
     frnn->OL = setupOutReduceLayer(frnn->R3->numRoughSets, frnn->numOutput * frnn->num_multiKindOutput, outputMin, outputMax,
                                    frnn->typeFuzzySet, frnn->typeTypeReducer,
@@ -1119,32 +1236,22 @@ void frnn_Predict_FRNN_setup(frnn_MOP_Predict_FRNN* frnn)
     frnn->numParaLocal = 0;
     if(frnn->tag_GEP == FLAG_STATUS_ON) {
         for(int n = 0; n < frnn->num_GEP; n++) {
-            frnn->numParaLocal +=
-                frnn->GEP0[n]->numParaLocal;
+            frnn->numParaLocal += frnn->GEP0[n]->numParaLocal;
         }
     }
-    frnn->numParaLocal +=
-        frnn->M1->numParaLocal;
-    frnn->numParaLocal +=
-        frnn->F2->numParaLocal;
-    frnn->numParaLocal +=
-        frnn->R3->numParaLocal +
-        frnn->OL->numParaLocal;
+    frnn->numParaLocal += frnn->M1->numParaLocal;
+    frnn->numParaLocal += frnn->F2->numParaLocal;
+    frnn->numParaLocal += frnn->R3->numParaLocal + frnn->OL->numParaLocal;
     //
     frnn->numParaLocal_disc = 0;
     if(frnn->tag_GEP == FLAG_STATUS_ON) {
         for(int n = 0; n < frnn->num_GEP; n++) {
-            frnn->numParaLocal_disc +=
-                frnn->GEP0[n]->numParaLocal_disc;
+            frnn->numParaLocal_disc += frnn->GEP0[n]->numParaLocal_disc;
         }
     }
-    frnn->numParaLocal_disc +=
-        frnn->M1->numParaLocal_disc;
-    frnn->numParaLocal_disc +=
-        frnn->F2->numParaLocal_disc;
-    frnn->numParaLocal_disc +=
-        frnn->R3->numParaLocal_disc +
-        frnn->OL->numParaLocal_disc;
+    frnn->numParaLocal_disc += frnn->M1->numParaLocal_disc;
+    frnn->numParaLocal_disc += frnn->F2->numParaLocal_disc;
+    frnn->numParaLocal_disc += frnn->R3->numParaLocal_disc + frnn->OL->numParaLocal_disc;
     frnn->layerNum = 4;
     //
     frnn->xType = (int*)malloc(frnn->numParaLocal * sizeof(int));
@@ -1309,9 +1416,8 @@ void ff_frnn_Predict_FRNN(frnn_MOP_Predict_FRNN* frnn, MY_FLT_TYPE* valIn, MY_FL
     ff_fuzzyLayer(frnn->F2, frnn->M1->degreeMembership, frnn->M1->dataflowStatus);
     ff_roughLayer(frnn->R3, frnn->F2->degreeRules, frnn->F2->dataflowStatus);
     //
-#if FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_CUR == FRNN_CONSEQUENCE_MOP_PREDICT_FRNN_ADAPT
     if(frnn_MOP_Predict->consequenceNodeStatus == ADAPTIVE_CONSEQUENCE_CENTROID) {
-        if(tag_classification_MOP_Predict_FRNN) {
+        if(flag_multi_in_cnsq_MOP_Predict_FRNN == FLAG_STATUS_ON) {
             for(int n = 0; n < frnn->num_multiKindOutput; n++) {
                 for(int i = 0; i < frnn_MOP_Predict->numOutput; i++) {
                     memcpy(frnn_MOP_Predict->OL->inputConsequenceNode[n * frnn_MOP_Predict->numOutput + i],
@@ -1321,16 +1427,15 @@ void ff_frnn_Predict_FRNN(frnn_MOP_Predict_FRNN* frnn, MY_FLT_TYPE* valIn, MY_FL
             }
         } else {
             for(int n = 0; n < frnn->num_multiKindOutput; n++) {
-                int tmp_ind = ind_out_predict_MOP_Predict_FRNN[n];
+                int tmp_o = ind_out_predict_MOP_Predict_FRNN[n];
                 for(int i = 0; i < frnn_MOP_Predict->numOutput; i++) {
                     memcpy(frnn_MOP_Predict->OL->inputConsequenceNode[n * frnn_MOP_Predict->numOutput + i],
-                           &valIn[tmp_ind * frnn->numInput],
+                           &valIn[tmp_o * frnn->numInput],
                            frnn_MOP_Predict->OL->numInputConsequenceNode * sizeof(MY_FLT_TYPE));
                 }
             }
         }
     }
-#endif
     ff_outReduceLayer(frnn->OL, frnn->R3->degreeRough, frnn->R3->dataflowStatus);
     //for(int i = 0; i < frnn->OL->numOutput; i++) {
     //    if(CHECK_INVALID(frnn->OL->valOutputFinal[i])) {
@@ -1465,7 +1570,9 @@ static double simplicity_MOP_Predict_FRNN()
     //}
     tmp_sum = 0;
     for(int i = 0; i < frnn_MOP_Predict->R3->numRoughSets; i++) {
-        tmp_sum += tmp_rough[i];
+        if(tmp_rough[i])
+            tmp_sum++;
+        //tmp_sum += tmp_rough[i];
         //if(tmp_rough[i] == 0)
         //    total_penalty_MOP_Predict_FRNN += penaltyVal_MOP_Predict_FRNN;
     }
@@ -1498,7 +1605,7 @@ static double generality_MOP_Predict_FRNN()
                     if(frnn_MOP_Predict->OL->typeTypeReducer == NIE_TAN_TYPE_REDUCER && k) {
                         continue;
                     }
-                    for(int m = 0; m <= frnn_MOP_Predict->OL->numInputConsequenceNode; m++) {
+                    for(int m = 0; m < frnn_MOP_Predict->OL->numInputConsequenceNode; m++) {
                         tmp_sum += fabs(frnn_MOP_Predict->OL->paraConsequenceNode[i][j][k][m]);
                         tmp_cnt++;
                     }
@@ -1535,15 +1642,17 @@ static double get_profit_MOP_Predict_FRNN(int tag_train_test)
     int* trading_actions = frnn_MOP_Predict->trading_actions;
     //
     if(tag_train_test == TRAIN_TAG_MOP_PREDICT_FRNN) {
-        all_close_prices = trainData_MOP_Predict_FRNN[0];
-        num_close_prices = trainDataSize_MOP_Predict_FRNN;
+        all_close_prices = allData_MOP_Predict_FRNN[0];
+        num_close_prices = trainDataSize_MOP_Predict_FRNN - frnn_MOP_Predict->numInput + 1;
     } else {
-        all_close_prices = testData_MOP_Predict_FRNN[0];
+        all_close_prices = &allData_MOP_Predict_FRNN[0][trainDataSize_MOP_Predict_FRNN];
         num_close_prices = testDataSize_MOP_Predict_FRNN;
     }
     //
-    for(int i = 0; i < num_close_prices - frnn_MOP_Predict->numInput + 1; i++) {
+    for(int i = 0; i < num_close_prices; i++) {
         int cur_i = i + frnn_MOP_Predict->numInput - 1;
+        if(tag_train_test == TEST_TAG_MOP_PREDICT_FRNN)
+            cur_i = i;
         if(trading_actions[cur_i] == CLASS_IND_BUY_MOP_PREDICT_FRNN) {
             if(frnn_MOP_Predict->money_in_hand > all_close_prices[cur_i]) {
                 frnn_MOP_Predict->money_in_hand -= all_close_prices[cur_i];
@@ -1563,7 +1672,7 @@ static double get_profit_MOP_Predict_FRNN(int tag_train_test)
     return total_profit;
 }
 
-void statistics_MOP_Predict_FRNN()
+void statistics_MOP_Predict_FRNN(FILE* fpt)
 {
     //
     print_para_memberLayer(frnn_MOP_Predict->M1);
@@ -1637,105 +1746,51 @@ void statistics_MOP_Predict_FRNN()
             }
         }
     }
-    ////////////////////////////////////////////////////////////////////////////
-    char tmp_fn[128];
-    FILE* fpt;
     //
-    sprintf(tmp_fn, "%s_MF.csv", prob_name_MOP_Predict_FRNN);
-    fpt = fopen(tmp_fn, "w");
-    if (!fpt) {
-        printf("%s(%d): Open file error ! Exiting ...\n", __FILE__, __LINE__);
-        exit(-3545);
-    }
     for(int j = 0; j < frnn_MOP_Predict->M1->numInput; j++) {
         for(int k = 0; k < frnn_MOP_Predict->M1->numMembershipFun[j]; k++) {
             printf("%d,", tmp_mem[j][k]);
             fprintf(fpt, "%d,", tmp_mem[j][k]);
-            if (k < frnn_MOP_Predict->M1->numMembershipFun[j] - 1) {
-                printf(",");
-                fprintf(fpt, ",");
-            }
-        }
-        printf("\n");
-        fprintf(fpt, "\n");
-    }
-    fclose(fpt);
-    //
-    sprintf(tmp_fn, "%s_FuzzyRule.csv", prob_name_MOP_Predict_FRNN);
-    fpt = fopen(tmp_fn, "w");
-    if (!fpt) {
-        printf("%s(%d): Open file error ! Exiting ...\n", __FILE__, __LINE__);
-        exit(-3545);
-    }
-    for(int i = 0; i < frnn_MOP_Predict->F2->numRules; i++) {
-        printf("%d", tmp_rule[i]);
-        fprintf(fpt, "%d", tmp_rule[i]);
-        if (i < frnn_MOP_Predict->F2->numRules - 1) {
-            printf(",");
-            fprintf(fpt, ",");
         }
     }
     printf("\n");
     fprintf(fpt, "\n");
     for(int i = 0; i < frnn_MOP_Predict->F2->numRules; i++) {
-        printf("%d", tmp_rule_op[i]);
-        fprintf(fpt, "%d", tmp_rule_op[i]);
-        if (i < frnn_MOP_Predict->F2->numRules - 1) {
-            printf(",");
-            fprintf(fpt, ",");
-        }
+        printf("%d,", tmp_rule[i]);
+        fprintf(fpt, "%d,", tmp_rule[i]);
     }
     printf("\n");
     fprintf(fpt, "\n");
     for(int i = 0; i < frnn_MOP_Predict->F2->numRules; i++) {
-        printf("%d", tmp_rule_in[i]);
-        fprintf(fpt, "%d", tmp_rule_in[i]);
-        if (i < frnn_MOP_Predict->F2->numRules - 1) {
-            printf(",");
-            fprintf(fpt, ",");
-        }
+        printf("%d,", tmp_rule_op[i]);
+        fprintf(fpt, "%d,", tmp_rule_op[i]);
     }
     printf("\n");
     fprintf(fpt, "\n");
-    fclose(fpt);
-    //
-    sprintf(tmp_fn, "%s_Rough.csv", prob_name_MOP_Predict_FRNN);
-    fpt = fopen(tmp_fn, "w");
-    if (!fpt) {
-        printf("%s(%d): Open file error ! Exiting ...\n", __FILE__, __LINE__);
-        exit(-3545);
-    }
-    for(int i = 0; i < frnn_MOP_Predict->R3->numRoughSets; i++) {
-        printf("%d", tmp_rough[i]);
-        fprintf(fpt, "%d", tmp_rough[i]);
-        if (i < frnn_MOP_Predict->R3->numRoughSets - 1) {
-            printf(",");
-            fprintf(fpt, ",");
-        }
+    for(int i = 0; i < frnn_MOP_Predict->F2->numRules; i++) {
+        printf("%d,", tmp_rule_in[i]);
+        fprintf(fpt, "%d,", tmp_rule_in[i]);
     }
     printf("\n");
     fprintf(fpt, "\n");
     for(int i = 0; i < frnn_MOP_Predict->R3->numRoughSets; i++) {
-        printf("%d", tmp_rough_op[i]);
-        fprintf(fpt, "%d", tmp_rough_op[i]);
-        if (i < frnn_MOP_Predict->R3->numRoughSets - 1) {
-            printf(",");
-            fprintf(fpt, ",");
-        }
+        printf("%d,", tmp_rough[i]);
+        fprintf(fpt, "%d,", tmp_rough[i]);
     }
     printf("\n");
     fprintf(fpt, "\n");
     for(int i = 0; i < frnn_MOP_Predict->R3->numRoughSets; i++) {
-        printf("%d", tmp_rough_in[i]);
-        fprintf(fpt, "%d", tmp_rough_in[i]);
-        if (i < frnn_MOP_Predict->R3->numRoughSets - 1) {
-            printf(",");
-            fprintf(fpt, ",");
-        }
+        printf("%d,", tmp_rough_op[i]);
+        fprintf(fpt, "%d,", tmp_rough_op[i]);
     }
     printf("\n");
     fprintf(fpt, "\n");
-    fclose(fpt);
+    for(int i = 0; i < frnn_MOP_Predict->R3->numRoughSets; i++) {
+        printf("%d,", tmp_rough_in[i]);
+        fprintf(fpt, "%d,", tmp_rough_in[i]);
+    }
+    printf("\n");
+    fprintf(fpt, "\n");
     //
     if(frnn_MOP_Predict->tag_GEP) {
     }
@@ -1816,7 +1871,7 @@ static void readData_stock_MOP_Predict_FRNN(char* fname, int trainNo, int testNo
                         printf("\n%s(%d):data are not enough...\n", __FILE__, __LINE__);
                         exit(2004);
                     }
-                    trainData_MOP_Predict_FRNN[iK][trainDataSize_MOP_Predict_FRNN + tmp_cnt] = elem;
+                    allData_MOP_Predict_FRNN[iK][trainDataSize_MOP_Predict_FRNN + tmp_cnt] = elem;
                 }
                 tmp_cnt++;
             }
@@ -1867,7 +1922,8 @@ static void readData_stock_MOP_Predict_FRNN(char* fname, int trainNo, int testNo
                         printf("\n%s(%d):data are not enough...\n", __FILE__, __LINE__);
                         exit(2004);
                     }
-                    testData_MOP_Predict_FRNN[iK][testDataSize_MOP_Predict_FRNN + tmp_cnt] = elem;
+                    allData_MOP_Predict_FRNN[iK][trainDataSize_MOP_Predict_FRNN +
+                                                 testDataSize_MOP_Predict_FRNN + tmp_cnt] = elem;
                 }
                 tmp_cnt++;
             }
@@ -1881,6 +1937,7 @@ static void readData_stock_MOP_Predict_FRNN(char* fname, int trainNo, int testNo
         testDataSize_MOP_Predict_FRNN += tmp_size;
         fclose(fpt_data);
     }
+    allDataSize_MOP_Predict_FRNN = trainDataSize_MOP_Predict_FRNN + testDataSize_MOP_Predict_FRNN;
     //
     free(buf);
     fclose(fpt);
@@ -1958,14 +2015,10 @@ static void readData_general_MOP_Predict_FRNN(char* fname, int tag_classificatio
     if(!tag_classification) {
         trainDataSize_MOP_Predict_FRNN = allDataSize_MOP_Predict_FRNN * 2 / 3;
         testDataSize_MOP_Predict_FRNN = allDataSize_MOP_Predict_FRNN - trainDataSize_MOP_Predict_FRNN;
-        for(int i = 0; i < numAttr; i++) {
-            memcpy(&trainData_MOP_Predict_FRNN[i][0], &allData_MOP_Predict_FRNN[i][0],
-                   trainDataSize_MOP_Predict_FRNN * sizeof(double));
-            memcpy(&testData_MOP_Predict_FRNN[i][0], &allData_MOP_Predict_FRNN[i][trainDataSize_MOP_Predict_FRNN],
-                   testDataSize_MOP_Predict_FRNN * sizeof(double));
-        }
     } else {
         int tmp_stratified_ind[MAX_DATA_LEN_MOP_PREDICT_FRNN];
+        int tmp_ind1[MAX_DATA_LEN_MOP_PREDICT_FRNN];
+        int tmp_ind2[MAX_DATA_LEN_MOP_PREDICT_FRNN];
         int tmp_cnt = 0;
         for(int n = 0; n < num_class_MOP_Predict_FRNN; n++) {
             for(int i = 0; i < allDataSize_MOP_Predict_FRNN; i++)
@@ -1976,19 +2029,43 @@ static void readData_general_MOP_Predict_FRNN(char* fname, int tag_classificatio
         int tmp_cnt2 = 0;
         for(int i = 0; i < allDataSize_MOP_Predict_FRNN; i++) {
             if(i % repNum_MOP_Predict_FRNN == repNo_MOP_Predict_FRNN) {
-                for(int n = 0; n <= numAttr; n++) {
-                    testData_MOP_Predict_FRNN[n][tmp_cnt1] = allData_MOP_Predict_FRNN[n][tmp_stratified_ind[i]];
-                }
-                tmp_cnt1++;
-            } else {
-                for(int n = 0; n <= numAttr; n++) {
-                    trainData_MOP_Predict_FRNN[n][tmp_cnt2] = allData_MOP_Predict_FRNN[n][tmp_stratified_ind[i]];
-                }
+                tmp_ind2[tmp_cnt2] = tmp_stratified_ind[i];
                 tmp_cnt2++;
+            } else {
+                tmp_ind1[tmp_cnt1] = tmp_stratified_ind[i];
+                tmp_cnt1++;
             }
         }
-        trainDataSize_MOP_Predict_FRNN = tmp_cnt2;
-        testDataSize_MOP_Predict_FRNN = tmp_cnt1;
+        trainDataSize_MOP_Predict_FRNN = tmp_cnt1;
+        testDataSize_MOP_Predict_FRNN = tmp_cnt2;
+        for(int i = 0; i < tmp_cnt2; i++) tmp_ind1[trainDataSize_MOP_Predict_FRNN + i] = tmp_ind2[i];
+        for(int i = 0; i < allDataSize_MOP_Predict_FRNN; i++) tmp_ind2[i] = i;
+        for(int i = 0; i < allDataSize_MOP_Predict_FRNN; i++) {
+            if(tmp_ind2[i] != tmp_ind1[i]) {
+                int the_ind = -1;
+                for(int j = i + 1; j < allDataSize_MOP_Predict_FRNN; j++) {
+                    if(tmp_ind2[j] == tmp_ind1[i]) {
+                        the_ind = j;
+                        break;
+                    }
+                }
+                if(the_ind == -1) {
+                    printf("\n%s(%d): something is wrong -- the index (%d) has not found, exiting ...\n",
+                           __FILE__, __LINE__, tmp_ind1[i]);
+                    exit(2005671);
+                }
+                int ti1 = tmp_ind2[i];
+                int ti2 = tmp_ind2[the_ind];
+                // swap
+                tmp_ind2[i] = ti2;
+                tmp_ind2[the_ind] = ti1;
+                for(int n = 0; n <= numAttr; n++) {
+                    double tmp_v = allData_MOP_Predict_FRNN[n][i];
+                    allData_MOP_Predict_FRNN[n][i] = allData_MOP_Predict_FRNN[n][the_ind];
+                    allData_MOP_Predict_FRNN[n][the_ind] = tmp_v;
+                }
+            }
+        }
     }
     //
     free(buf);
@@ -1998,12 +2075,12 @@ static void readData_general_MOP_Predict_FRNN(char* fname, int tag_classificatio
 static void normalizeData_MOP_Predict_FRNN()
 {
     for(int i = 0; i < numAttr; i++) {
-        trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = trainData_MOP_Predict_FRNN[i][0];
-        trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = trainData_MOP_Predict_FRNN[i][0];
+        trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = allData_MOP_Predict_FRNN[i][0];
+        trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = allData_MOP_Predict_FRNN[i][0];
         trainStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN] = 0;
         trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] = 0;
         for(int j = 0; j < trainDataSize_MOP_Predict_FRNN; j++) {
-            double tmp_dt = trainData_MOP_Predict_FRNN[i][j];
+            double tmp_dt = allData_MOP_Predict_FRNN[i][j];
             if(trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] > tmp_dt)
                 trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = tmp_dt;
             if(trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] < tmp_dt)
@@ -2012,19 +2089,19 @@ static void normalizeData_MOP_Predict_FRNN()
         }
         trainStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN] /= trainDataSize_MOP_Predict_FRNN;
         for(int j = 0; j < trainDataSize_MOP_Predict_FRNN; j++) {
-            double tmp_dt = trainData_MOP_Predict_FRNN[i][j];
+            double tmp_dt = allData_MOP_Predict_FRNN[i][j];
             double tmp_mn = trainStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN];
             trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] += (tmp_dt - tmp_mn) * (tmp_dt - tmp_mn);
         }
         trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] /= trainDataSize_MOP_Predict_FRNN;
         trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] = sqrt(trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN]);
         //
-        testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = testData_MOP_Predict_FRNN[i][0];
-        testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = testData_MOP_Predict_FRNN[i][0];
+        testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = allData_MOP_Predict_FRNN[i][trainDataSize_MOP_Predict_FRNN];
+        testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = allData_MOP_Predict_FRNN[i][trainDataSize_MOP_Predict_FRNN];
         testStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN] = 0;
         testStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] = 0;
-        for(int j = 0; j < testDataSize_MOP_Predict_FRNN; j++) {
-            double tmp_dt = testData_MOP_Predict_FRNN[i][j];
+        for(int j = trainDataSize_MOP_Predict_FRNN; j < allDataSize_MOP_Predict_FRNN; j++) {
+            double tmp_dt = allData_MOP_Predict_FRNN[i][j];
             if(testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] > tmp_dt)
                 testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = tmp_dt;
             if(testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] < tmp_dt)
@@ -2032,52 +2109,69 @@ static void normalizeData_MOP_Predict_FRNN()
             testStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN] += tmp_dt;
         }
         testStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN] /= testDataSize_MOP_Predict_FRNN;
-        for(int j = 0; j < testDataSize_MOP_Predict_FRNN; j++) {
-            double tmp_dt = testData_MOP_Predict_FRNN[i][j];
+        for(int j = trainDataSize_MOP_Predict_FRNN; j < allDataSize_MOP_Predict_FRNN; j++) {
+            double tmp_dt = allData_MOP_Predict_FRNN[i][j];
             double tmp_mn = testStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN];
             testStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] += (tmp_dt - tmp_mn) * (tmp_dt - tmp_mn);
         }
         testStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] /= testDataSize_MOP_Predict_FRNN;
         testStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] = sqrt(testStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN]);
         //////////////////////////////////////////////////////////////////////////
-        for(int j = 0; j < trainDataSize_MOP_Predict_FRNN; j++) {
+        if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_Z_SCORE_MOP_Predict_FRNN) {
+
             if(trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN]) {
-                trainData_MOP_Predict_FRNN[i][j] -= trainStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN];
-                trainData_MOP_Predict_FRNN[i][j] /= trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN];
+                for(int j = 0; j < allDataSize_MOP_Predict_FRNN; j++) {
+                    allData_MOP_Predict_FRNN[i][j] -= trainStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN];
+                    allData_MOP_Predict_FRNN[i][j] /= trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN];
+                }
             } else {
-                trainData_MOP_Predict_FRNN[i][j] = 0;
+                for(int j = 0; j < allDataSize_MOP_Predict_FRNN; j++) {
+                    allData_MOP_Predict_FRNN[i][j] = 0;
+                }
             }
-        }
-        //
-        for(int j = 0; j < testDataSize_MOP_Predict_FRNN; j++) {
-            if(trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN]) {
-                testData_MOP_Predict_FRNN[i][j] -= trainStat_MOP_Predict_FRNN[i][DATA_MEAN_MOP_Predict_FRNN];
-                testData_MOP_Predict_FRNN[i][j] /= trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN];
+            trainFact_MOP_Predict_FRNN[i] = trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN] *
+                                            trainStat_MOP_Predict_FRNN[i][DATA_STD_MOP_Predict_FRNN];
+        } else if(NORMALIZE_MOP_Predict_FRNN == NORMALIZE_MIN_MAX_MOP_Predict_FRNN) {
+            if(trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] >
+               trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN]) {
+                for(int j = 0; j < allDataSize_MOP_Predict_FRNN; j++) {
+                    allData_MOP_Predict_FRNN[i][j] -= trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN];
+                    allData_MOP_Predict_FRNN[i][j] /= (trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] -
+                                                       trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN]);
+                }
             } else {
-                testData_MOP_Predict_FRNN[i][j] = 0;
+                for(int j = 0; j < allDataSize_MOP_Predict_FRNN; j++) {
+                    allData_MOP_Predict_FRNN[i][j] = 0;
+                }
             }
+            trainFact_MOP_Predict_FRNN[i] = (trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] -
+                                             trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN]) *
+                                            (trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] -
+                                             trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN]);
         }
         //////////////////////////////////////////////////////////////////////////
-        trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = trainData_MOP_Predict_FRNN[i][0];
-        trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = trainData_MOP_Predict_FRNN[i][0];
-        for(int j = 0; j < trainDataSize_MOP_Predict_FRNN; j++) {
-            double tmp_dt = trainData_MOP_Predict_FRNN[i][j];
-            if(trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] > tmp_dt)
-                trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = tmp_dt;
-            if(trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] < tmp_dt)
-                trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = tmp_dt;
-        }
-        //
-        testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = testData_MOP_Predict_FRNN[i][0];
-        testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = testData_MOP_Predict_FRNN[i][0];
-        for(int j = 0; j < testDataSize_MOP_Predict_FRNN; j++) {
-            double tmp_dt = testData_MOP_Predict_FRNN[i][j];
-            if(testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] > tmp_dt)
-                testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = tmp_dt;
-            if(testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] < tmp_dt)
-                testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = tmp_dt;
-        }
+        //trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = trainData_MOP_Predict_FRNN[i][0];
+        //trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = trainData_MOP_Predict_FRNN[i][0];
+        //for(int j = 0; j < trainDataSize_MOP_Predict_FRNN; j++) {
+        //    double tmp_dt = trainData_MOP_Predict_FRNN[i][j];
+        //    if(trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] > tmp_dt)
+        //        trainStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = tmp_dt;
+        //    if(trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] < tmp_dt)
+        //        trainStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = tmp_dt;
+        //}
+        ////
+        //testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = testData_MOP_Predict_FRNN[i][0];
+        //testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = testData_MOP_Predict_FRNN[i][0];
+        //for(int j = 0; j < testDataSize_MOP_Predict_FRNN; j++) {
+        //    double tmp_dt = testData_MOP_Predict_FRNN[i][j];
+        //    if(testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] > tmp_dt)
+        //        testStat_MOP_Predict_FRNN[i][DATA_MIN_MOP_Predict_FRNN] = tmp_dt;
+        //    if(testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] < tmp_dt)
+        //        testStat_MOP_Predict_FRNN[i][DATA_MAX_MOP_Predict_FRNN] = tmp_dt;
+        //}
     }
+    //
+    return;
 }
 
 static void get_Evaluation_Indicators_MOP_Predict_FRNN(int num_class, MY_FLT_TYPE* N_TP, MY_FLT_TYPE* N_FP, MY_FLT_TYPE* N_TN,
@@ -2194,18 +2288,18 @@ static void genTradingLabel_MOP_Predict_FRNN()
             int ind_start = j;
             int ind_final = j + win_size - 1;
             int ind_middl = j + win_size / 2;
-            double val_mid = trainData_MOP_Predict_FRNN[0][ind_middl];
+            double val_mid = allData_MOP_Predict_FRNN[0][ind_middl];
             int ind_min = j;
             int ind_max = j;
-            double val_min = trainData_MOP_Predict_FRNN[0][j];
-            double val_max = trainData_MOP_Predict_FRNN[0][j];
+            double val_min = allData_MOP_Predict_FRNN[0][j];
+            double val_max = allData_MOP_Predict_FRNN[0][j];
             for(int k = ind_start + 1; k <= ind_final; k++) {
-                if(trainData_MOP_Predict_FRNN[0][k] < val_min) {
-                    val_min = trainData_MOP_Predict_FRNN[0][k];
+                if(allData_MOP_Predict_FRNN[0][k] < val_min) {
+                    val_min = allData_MOP_Predict_FRNN[0][k];
                     ind_min = k;
                 }
-                if(trainData_MOP_Predict_FRNN[0][k] > val_max) {
-                    val_max = trainData_MOP_Predict_FRNN[0][k];
+                if(allData_MOP_Predict_FRNN[0][k] > val_max) {
+                    val_max = allData_MOP_Predict_FRNN[0][k];
                     ind_max = k;
                 }
             }
@@ -2215,22 +2309,22 @@ static void genTradingLabel_MOP_Predict_FRNN()
                 train_trading_label_MOP_Predict_FRNN[i][ind_middl] = CLASS_IND_SELL_MOP_PREDICT_FRNN;
         }
         // test data
-        for(int j = 0; j < testDataSize_MOP_Predict_FRNN - win_size + 1; j++) {
+        for(int j = trainDataSize_MOP_Predict_FRNN - win_size; j < allDataSize_MOP_Predict_FRNN - win_size + 1; j++) {
             int ind_start = j;
             int ind_final = j + win_size - 1;
             int ind_middl = j + win_size / 2;
-            double val_mid = testData_MOP_Predict_FRNN[0][ind_middl];
+            double val_mid = allData_MOP_Predict_FRNN[0][ind_middl];
             int ind_min = j;
             int ind_max = j;
-            double val_min = testData_MOP_Predict_FRNN[0][j];
-            double val_max = testData_MOP_Predict_FRNN[0][j];
+            double val_min = allData_MOP_Predict_FRNN[0][j];
+            double val_max = allData_MOP_Predict_FRNN[0][j];
             for(int k = ind_start + 1; k <= ind_final; k++) {
-                if(testData_MOP_Predict_FRNN[0][k] < val_min) {
-                    val_min = testData_MOP_Predict_FRNN[0][k];
+                if(allData_MOP_Predict_FRNN[0][k] < val_min) {
+                    val_min = allData_MOP_Predict_FRNN[0][k];
                     ind_min = k;
                 }
-                if(testData_MOP_Predict_FRNN[0][k] > val_max) {
-                    val_max = testData_MOP_Predict_FRNN[0][k];
+                if(allData_MOP_Predict_FRNN[0][k] > val_max) {
+                    val_max = allData_MOP_Predict_FRNN[0][k];
                     ind_max = k;
                 }
             }
@@ -2290,7 +2384,7 @@ static double rnd_uni_Predict_FRNN(long* idum)
     j = iy / NDIV_Predict_FRNN;
     iy = iv[j] - idum2;
     iv[j] = *idum;
-    if(iy < 1) iy += IMM1_Predict_FRNN;     //printf("%lf\n", AM_Predict_FRNN*iy);
+    if(iy < 1) iy += IMM1_Predict_FRNN;       //printf("%lf\n", AM_Predict_FRNN*iy);
     if((temp = AM_Predict_FRNN * iy) > RNMX_Predict_FRNN) return RNMX_Predict_FRNN;
     else return temp;
 }/*------End of rnd_uni_Classify_CNN()--------------------------*/
@@ -2336,6 +2430,31 @@ static void trimLine_MOP_Predict_FRNN(char line[])
         }
         i++;
     }
+}
+
+static int get_setting_MOP_Predict_FRNN(char* wholestr, const char* candidstr, int& val)
+{
+    //
+    char tmp_str[MAX_STR_LEN_MOP_Predict_FRNN];
+    sprintf(tmp_str, "%s", wholestr);
+    char tmp_delim[] = "_";
+    char* p;
+    int elem_int;
+    int flag_found = 0;
+    for(p = strtok(tmp_str, tmp_delim); p; p = strtok(NULL, tmp_delim)) {
+        if(flag_found == 1) {
+            if(sscanf(p, "%d", &elem_int) != 1) {
+                printf("\n%s(%d): setting value not found error...\n", __FILE__, __LINE__);
+                exit(65871001);
+            }
+            val = elem_int;
+            flag_found = 2;
+            break;
+        }
+        if(!strcmp(p, candidstr)) flag_found = 1;
+    }
+    //
+    return (flag_found == 2);
 }
 
 //////////////////////////////////////////////////////////////////////////

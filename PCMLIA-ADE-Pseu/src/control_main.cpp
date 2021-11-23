@@ -16,9 +16,7 @@ void set_para(int npop, int ndim, int nobj, int narch, int maxIter, char* func_n
     st_archive_p.nArch_sub_max = npop;
     20;
     narch;
-    st_archive_p.nArch_sub_before =
-        20;
-    narch;
+    st_archive_p.nArch_sub_before = 20; // narch;
     st_ctrl_p.flag_multiPop = 0;
     st_pop_best_p.n_best_history = 7;
     if(st_global_p.nObj == 2) st_utility_p.utility_threshold = 0.01;
@@ -74,6 +72,7 @@ void set_para(int npop, int ndim, int nobj, int narch, int maxIter, char* func_n
     readParaFromFile();
     checkParas();
     set_init_rand_type();
+    for(int i = 0; i < st_MPI_p.mpi_rank; i++) pointer_gen_rand();
     show_para_A();
     show_para_Prob();
     return;
@@ -101,6 +100,7 @@ void run_DPCC()
     /*grouping
     property, interdependence
     population initialization*/
+    st_grp_info_p.flag_predefined = 1;
     if(st_ctrl_p.type_test == MY_TYPE_NORMAL) {
         if(!strcmp(st_global_p.testInstance, "WDCN")) {
             //grouping_variables_rand_unif(4);
@@ -118,11 +118,12 @@ void run_DPCC()
             //grouping_variables_rand_unif(5);
         } else if(!strcmp(st_global_p.testInstance, "EdgeComputation")) {
             //grouping_variables_EdgeComputation();
-            grouping_variables_rand_unif(4);
+            grouping_variables_unif(4, 1);
         } else {
             allocateMemory_grouping_ana();
             grouping_variables();
             freeMemory_grouping_ana();
+            st_grp_info_p.flag_predefined = 0;
         }
     } else if(st_ctrl_p.type_test == MY_TYPE_FS_CLASSIFY ||
               st_ctrl_p.type_test == MY_TYPE_FS_CLASSIFY_TREE) {
@@ -150,7 +151,7 @@ void run_DPCC()
     } else if(st_ctrl_p.type_test == MY_TYPE_EVO5_FRNN) {
         grouping_variables_EVO5_FRNN();
     } else if(st_ctrl_p.type_test == MY_TYPE_EVO_FRNN_PREDICT) {
-        grouping_variables_EVO_FRNN_Predict();
+        grouping_variables_EVO_FRNN(frnn_MOP_Predict->xType);
     } else if(st_ctrl_p.type_test == MY_TYPE_INTRUSION_DETECTION_CLASSIFY) {
         grouping_variables_IntrusionDetection_Classify();
     } else if(st_ctrl_p.type_test == MY_TYPE_ACTIVITY_DETECTION_CLASSIFY) {
@@ -158,9 +159,18 @@ void run_DPCC()
     } else if(st_ctrl_p.type_test == MY_TYPE_RecSys_SmartCity) {
         grouping_variables_RS_SC();
     } else if(st_ctrl_p.type_test == MY_TYPE_EVO_CNN) {
-        grouping_variables_rand_unif(5);
+        grouping_variables_unif(5, 1);
     } else if(st_ctrl_p.type_test == MY_TYPE_EVO_CFRNN) {
         grouping_variables_evoCFRNN();
+    } else if(st_ctrl_p.type_test == MY_TYPE_EVO_MOBILE_SINK) {
+        if(strstr(st_global_p.testInstance, "evoMobileSink_FRNN")) {
+            grouping_variables_EVO_FRNN(frnn_mop_mobile_sink->xType);
+        } else if(strstr(st_global_p.testInstance, "evoMobileSink_GEP_only")) {
+            grouping_variables_unif(2, 0);
+            // st_ctrl_p.type_xor_evo_mut = XOR_EVO_MUT_ADAP;
+        } else {
+            grouping_variables_unif(2, 0);
+        }
     } else {
         if(0 == st_MPI_p.mpi_rank) {
             printf("%s:Problem type error, exiting...\n", AT);
@@ -204,6 +214,7 @@ void run_DPCC()
     //////////////////////////////////////////////////////////////////////////
     allocateMemory();
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == st_MPI_p.mpi_size - 1) printf("allocateMemory(); \n");
 #endif
@@ -221,12 +232,14 @@ void run_DPCC()
     /*parameters*/
     initializePara();
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == st_MPI_p.mpi_size - 1) printf("initializePara(); \n");
 #endif
     //////////////////////////////////////////////////////////////////////////
     show_para_B();
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == st_MPI_p.mpi_size - 1) printf("show_para_B(); \n");
 #endif
@@ -245,12 +258,14 @@ void run_DPCC()
         MPI_Abort(MPI_COMM_WORLD, MY_ERROR_NO_SUCH_ALGO_MECH);
     }
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == 0) printf("localInitialization \n");
 #endif
     //////////////////////////////////////////////////////////////////////////
     initializePopulation();
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == st_MPI_p.mpi_size - 1) printf("initializePopulation(); \n");
 #endif
@@ -258,6 +273,7 @@ void run_DPCC()
     /*number of generation*/
     initializeGenNum();
 #ifdef DEBUG_TAG_TMP
+    show_DeBug_info();
     MPI_Barrier(MPI_COMM_WORLD);
     if(st_MPI_p.mpi_rank == 0) printf("initializeGenNum();. MAX=%d ", st_global_p.generatMax);
 #endif
@@ -273,16 +289,19 @@ void run_DPCC()
         update_xBest_history(UPDATE_INIT, 0, NULL, NULL, NULL, NULL);
         update_xBest_history(UPDATE_GIVEN, st_global_p.nPop, NULL, st_pop_evo_cur.var, st_pop_evo_cur.obj, st_qu_p.rot_angle_cur);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("Update_xBest(); done.\n");
 #endif
         transformPop(st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("transformPop(); \n");
 #endif
         updateNeighborTable(WEIGHT_BASED, st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("updateNeighborTable(); ~ niche = %d \n", st_decomp_p.niche);
 #endif
@@ -290,6 +309,7 @@ void run_DPCC()
         /*Main Loop*/
         while(st_global_p.generation < st_global_p.generatMax) {
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0)
                 printf("while(st_global_p.generation < st_global_p.generatMax) - %d~%d.\n",
@@ -312,18 +332,21 @@ void run_DPCC()
                 }
             }
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("save_during_operation().\n");
 #endif
             //exchange
             exchangeInfo_DPCCMOEA();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("exchangeInfo_DPCCMOEA(); \n");
 #endif
             //evolution
             cooperativeCoevolution(st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("cooperativeCoevolution().\n");
 #endif
@@ -331,12 +354,14 @@ void run_DPCC()
                 population_synchronize(st_ctrl_p.algo_mech_type);
                 transfer_x_neighbor();
 #ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
                 MPI_Barrier(MPI_COMM_WORLD);
                 if(st_MPI_p.mpi_rank == 0) printf("population_synchronize().\n");
 #endif
                 update_xBest_history(UPDATE_GIVEN, st_global_p.nPop_mine, NULL,
                                      st_pop_evo_cur.var, st_pop_evo_cur.obj, st_qu_p.rot_angle_cur);
 #ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
                 MPI_Barrier(MPI_COMM_WORLD);
                 if(st_MPI_p.mpi_rank == 0) printf("update_xBest_history().\n");
 #endif
@@ -350,11 +375,13 @@ void run_DPCC()
             st_global_p.iter += st_global_p.iter_per_gen;
             st_global_p.generation++;
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("GEN: %d~%d.\n", st_global_p.generation, st_global_p.generatMax);
 #endif
             save_during_operation();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("save_during_operation(); \n");
 #endif
@@ -374,18 +401,21 @@ void run_DPCC()
             }
             updateStructure();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("updateStructure().\n");
 #endif
         }
         collectDecompositionArchive(st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("collectDecompositionArchive().\n");
 #endif
         if(st_ctrl_p.type_test == MY_TYPE_FS_CLASSIFY || st_ctrl_p.type_test == MY_TYPE_FS_CLASSIFY_TREE) {
             transform_var_feature(st_archive_p.var, st_archive_p.var_feature, st_global_p.nPop);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("transform_var_feature().\n");
 #endif
@@ -418,16 +448,19 @@ void run_DPCC()
         update_xBest_history(UPDATE_INIT, 0, NULL, NULL, NULL, NULL);
         update_xBest_history(UPDATE_GIVEN, st_global_p.nPop, NULL, st_pop_evo_cur.var, st_pop_evo_cur.obj, st_qu_p.rot_angle_cur);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("Update_xBest(); done.\n");
 #endif
         transformPop(st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("transformPop(); \n");
 #endif
         updateNeighborTable(WEIGHT_BASED, st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("updateNeighborTable(); \n");
 #endif
@@ -436,6 +469,7 @@ void run_DPCC()
         while(st_global_p.generation < st_global_p.generatMax) {
             //EMO_adjust_constraint_penalty(strct_global_paras.iter - strct_global_paras.usedIter_init_grp, strct_global_paras.maxIter - strct_global_paras.usedIter_init_grp);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0)
                 printf("while(strct_global_paras.generation < strct_global_paras.generatMax) - %d~%d.\n",
@@ -457,24 +491,28 @@ void run_DPCC()
                 }
             }
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("save_during_operation().\n");
 #endif
             //evolution
             cooperativeCoevolution(st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("cooperativeCoevolution().\n");
 #endif
             if(st_global_p.generation % st_global_p.CHECK_GAP_SYNC == st_global_p.CHECK_GAP_SYNC - 1) {
                 population_synchronize(st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
                 MPI_Barrier(MPI_COMM_WORLD);
                 if(st_MPI_p.mpi_rank == 0) printf("population_synchronize().\n");
 #endif
                 update_xBest_history(UPDATE_GIVEN, st_global_p.nPop, NULL,
                                      st_pop_evo_cur.var, st_pop_evo_cur.obj, st_qu_p.rot_angle_cur);
 #ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
                 MPI_Barrier(MPI_COMM_WORLD);
                 if(st_MPI_p.mpi_rank == 0) printf("update_xBest_history().\n");
 #endif
@@ -488,11 +526,13 @@ void run_DPCC()
             st_global_p.iter += st_global_p.iter_per_gen;
             st_global_p.generation++;
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("GEN: %d~%d.\n", st_global_p.generation, st_global_p.generatMax);
 #endif
             save_during_operation();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("save_during_operation(); \n");
 #endif
@@ -512,6 +552,7 @@ void run_DPCC()
             }
             updateStructure();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("updateStructure().\n");
 #endif
@@ -519,12 +560,14 @@ void run_DPCC()
         //////////////////////////////////////////////////////////////////////////
         collectDecompositionArchive(st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("collectDecompositionArchive().\n");
 #endif
         if(st_ctrl_p.type_test == MY_TYPE_FS_CLASSIFY || st_ctrl_p.type_test == MY_TYPE_FS_CLASSIFY_TREE) {
             transform_var_feature(st_archive_p.var, st_archive_p.var_feature, st_global_p.nPop);
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("transform_var_feature().\n");
 #endif
@@ -554,6 +597,7 @@ void run_DPCC()
         //////////////////////////////////////////////////////////////////////////
         refinePop_ND(INIT_TAG, st_ctrl_p.algo_mech_type);
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("refinePop_ND(INIT_TAG); \n");
 #endif
@@ -561,6 +605,7 @@ void run_DPCC()
         /*Main Loop*/
         while(st_global_p.generation < st_global_p.generatMax) {
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0)
                 printf("while(strct_global_paras.generation < strct_global_paras.generatMax) - %d~%d.\n",
@@ -568,6 +613,7 @@ void run_DPCC()
 #endif
             save_during_operation_ND();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("save_during_operation_ND(); \n");
 #endif
@@ -588,6 +634,7 @@ void run_DPCC()
             //evolution
             cooperativeCoevolution_ND();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("cooperativeCoevolution_ND(); \n");
 #endif
@@ -595,12 +642,14 @@ void run_DPCC()
             if(st_global_p.generation % st_global_p.CHECK_GAP_EXCH == 0 && st_global_p.generation) {
                 exchangeInfo_ND();
 #ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
                 MPI_Barrier(MPI_COMM_WORLD);
                 if(st_MPI_p.mpi_rank == 0) printf("exchangeInformation_ND(); \n");
 #endif
             } else { //if(strct_global_paras.generation%CHECK_GAP_SYNC==CHECK_GAP_SYNC-1)
                 population_synchronize_ND();
 #ifdef DEBUG_TAG_TMP
+                show_DeBug_info();
                 MPI_Barrier(MPI_COMM_WORLD);
                 if(st_MPI_p.mpi_rank == 0) printf("population_synchronize_ND(); \n");
 #endif
@@ -609,12 +658,14 @@ void run_DPCC()
             st_global_p.iter += st_global_p.iter_per_gen;
             st_global_p.generation++;
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("GEN: %d~%d.\n", st_global_p.generation, st_global_p.generatMax);
 #endif
             //
             save_during_operation_ND();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("save_during_operation_ND(); \n");
 #endif
@@ -634,6 +685,7 @@ void run_DPCC()
             }
             updateStructure_ND();
 #ifdef DEBUG_TAG_TMP
+            show_DeBug_info();
             MPI_Barrier(MPI_COMM_WORLD);
             if(st_MPI_p.mpi_rank == 0) printf("updateStructure_ND(); \n");
 #endif
@@ -641,6 +693,7 @@ void run_DPCC()
         //////////////////////////////////////////////////////////////////////////
         collectNDArchive();
 #ifdef DEBUG_TAG_TMP
+        show_DeBug_info();
         MPI_Barrier(MPI_COMM_WORLD);
         if(st_MPI_p.mpi_rank == 0) printf("collectNDArchive(); \n");
 #endif

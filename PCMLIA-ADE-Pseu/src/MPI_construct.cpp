@@ -30,7 +30,7 @@ void setMPI()
         }
     } else if(algo_mech_type == NONDOMINANCE) {
         if(multiPop_mode == MP_0)
-            cur_strct_type = MAIN_POP_SUB_POPS_ND;
+            cur_strct_type = MAIN_POP_ONLY;
         else if(multiPop_mode == MP_I ||
                 multiPop_mode == MP_II ||
                 multiPop_mode == MP_ADAP)
@@ -198,6 +198,8 @@ void build_MPI_structure(int structure_type, int init_tag)
                     if(i && sc_rate[i] > sc_rate[0]) {
                         sc_rate[0] = sc_rate[i];
                     }
+                }
+                for(int i = 0; i <= nObj; i++) {
                     sum_sc_rates += sc_rate[i];
                 }
                 for(int i = 0; i <= nObj; i++) {
@@ -273,53 +275,64 @@ void build_MPI_structure(int structure_type, int init_tag)
         //    strct_archive_info.nArch_sub = strct_MPI_info.nPop_all[1];
         //}
     } else {
-        // also consider group number
-        double tmp_sum_ratio = 0.0;
-        for(int i = 0; i <= nObj; i++) {
-            st_MPI_p.vec_MPI_ratio[i] = st_MPI_p.vec_importance[i] * st_grp_info_p.vec_sizeGroups[i];
-            tmp_sum_ratio += st_MPI_p.vec_MPI_ratio[i];
-        }
-        for(int i = 0; i <= nObj; i++) {
-            st_MPI_p.vec_MPI_ratio[i] /= tmp_sum_ratio;
-        }
-        // allocate MPI
-        int tmp_sum_MPI = 0;
-        for(int i = 0; i <= nObj; i++) {
-            st_MPI_p.each_size[i] = (int)(st_MPI_p.mpi_size * st_MPI_p.vec_MPI_ratio[i]);
-            if(structure_type != MAIN_POP_SUB_POPS_ND &&
-               structure_type != UPDATE_MPI_STRUCTURE_ND) {
-                st_MPI_p.each_size[i] -= (st_MPI_p.each_size[i] % st_grp_info_p.vec_sizeGroups[i]);
+        int tmp_flag = 1;
+        while(tmp_flag) {
+            tmp_flag = 0;
+            // also consider group number
+            double tmp_sum_ratio = 0.0;
+            for(int i = 0; i <= nObj; i++) {
+                st_MPI_p.vec_MPI_ratio[i] = st_MPI_p.vec_importance[i] * st_grp_info_p.vec_sizeGroups[i];
+                tmp_sum_ratio += st_MPI_p.vec_MPI_ratio[i];
             }
-            if(i &&
-               st_ctrl_p.flag_multiPop &&
-               st_MPI_p.each_size[i] < st_grp_info_p.vec_sizeGroups[i]) {
-                st_MPI_p.each_size[i] = st_grp_info_p.vec_sizeGroups[i];
+            for(int i = 0; i <= nObj; i++) {
+                st_MPI_p.vec_MPI_ratio[i] /= tmp_sum_ratio;
             }
-            tmp_sum_MPI += st_MPI_p.each_size[i];
-        }
-        st_MPI_p.each_size[0] += (st_MPI_p.mpi_size - tmp_sum_MPI);
-        // slave MPI number
-        for(int i = 0; i <= nObj; i++) {
-            st_MPI_p.vec_num_MPI_slave[i] = st_MPI_p.each_size[i] - st_MPI_p.vec_num_MPI_master[i];
-        }
-        ////pop size for sub pops
-        // get back importance ratios
-        for(int i = 0; i <= nObj; i++) {
-            st_MPI_p.vec_importance[i] = (double)st_MPI_p.each_size[i] / st_grp_info_p.vec_sizeGroups[i];
-        }
-        // main pop size
-        if(st_ctrl_p.algo_mech_type == LOCALIZATION ||
-           st_ctrl_p.algo_mech_type == DECOMPOSITION) {
-            st_MPI_p.nPop_all[0] = nPop;
-        } else if(st_ctrl_p.algo_mech_type == NONDOMINANCE) {
-            st_MPI_p.nPop_all[0] = nArch;
-        }
-        // sub pop sizes
-        for(int i = 1; i <= nObj; i++) {
-            st_MPI_p.nPop_all[i] = (int)(st_MPI_p.nPop_all[0] / st_MPI_p.vec_importance[0] *
-                                         st_MPI_p.vec_importance[i]);
-            if(st_MPI_p.nPop_all[i] < 5 && st_ctrl_p.flag_multiPop)
-                st_MPI_p.nPop_all[i] = 5;
+            // allocate MPI
+            int tmp_sum_MPI = 0;
+            for(int i = 0; i <= nObj; i++) {
+                st_MPI_p.each_size[i] = (int)(st_MPI_p.mpi_size * st_MPI_p.vec_MPI_ratio[i]);
+                if(structure_type != MAIN_POP_SUB_POPS_ND &&
+                   structure_type != UPDATE_MPI_STRUCTURE_ND) {
+                    st_MPI_p.each_size[i] -= (st_MPI_p.each_size[i] % st_grp_info_p.vec_sizeGroups[i]);
+                }
+                if(i &&
+                   st_ctrl_p.flag_multiPop &&
+                   st_MPI_p.each_size[i] < st_grp_info_p.vec_sizeGroups[i]) {
+                    st_MPI_p.each_size[i] = st_grp_info_p.vec_sizeGroups[i];
+                }
+                tmp_sum_MPI += st_MPI_p.each_size[i];
+            }
+            st_MPI_p.each_size[0] += (st_MPI_p.mpi_size - tmp_sum_MPI);
+            // slave MPI number
+            for(int i = 0; i <= nObj; i++) {
+                st_MPI_p.vec_num_MPI_slave[i] = st_MPI_p.each_size[i] - st_MPI_p.vec_num_MPI_master[i];
+            }
+            ////pop size for sub pops
+            // get back importance ratios
+            for(int i = 0; i <= nObj; i++) {
+                st_MPI_p.vec_importance[i] = (double)st_MPI_p.each_size[i] / st_grp_info_p.vec_sizeGroups[i];
+            }
+            // main pop size
+            if(st_ctrl_p.algo_mech_type == LOCALIZATION ||
+               st_ctrl_p.algo_mech_type == DECOMPOSITION) {
+                st_MPI_p.nPop_all[0] = nPop;
+            } else if(st_ctrl_p.algo_mech_type == NONDOMINANCE) {
+                st_MPI_p.nPop_all[0] = nArch;
+            }
+            // sub pop sizes
+            for(int i = 1; i <= nObj; i++) {
+                st_MPI_p.nPop_all[i] = (int)(st_MPI_p.nPop_all[0] / st_MPI_p.vec_importance[0] *
+                                             st_MPI_p.vec_importance[i]);
+                if(st_MPI_p.nPop_all[i] < 5 && st_ctrl_p.flag_multiPop) {
+                    if(st_MPI_p.nPop_all[i] < 4) tmp_flag++;
+                    st_MPI_p.nPop_all[i] = 5;
+                }
+            }
+            if(tmp_flag) {
+                for(int i = 1; i <= nObj; i++) {
+                    st_MPI_p.vec_importance[i] = (double)st_MPI_p.nPop_all[i] / st_MPI_p.nPop_all[0] * st_MPI_p.vec_importance[0];
+                }
+            }
         }
     }
     //////////////////////////////////////////////////////////////////////////
@@ -386,8 +399,7 @@ void build_MPI_structure(int structure_type, int init_tag)
         st_MPI_p.color_obj = 0;
     }
     //split to 2 kinds of MPI_Comm, either M or 1
-    MPI_Comm_split(MPI_COMM_WORLD, st_MPI_p.color_obj, st_MPI_p.mpi_rank,
-                   &st_MPI_p.comm_obj);
+    MPI_Comm_split(MPI_COMM_WORLD, st_MPI_p.color_obj, st_MPI_p.mpi_rank, &st_MPI_p.comm_obj);
     MPI_Comm_size(st_MPI_p.comm_obj, &st_MPI_p.mpi_size_obj);
     MPI_Comm_rank(st_MPI_p.comm_obj, &st_MPI_p.mpi_rank_obj);
     //MPI processes are split to (M+1) MPI_Comm
