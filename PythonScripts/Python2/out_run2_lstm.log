@@ -1,0 +1,1701 @@
+nohup: ignoring input
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi2.csv', flag_fuse=False, flag_multi=False, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-200757', shuffle=True, str_time='20211113-200757', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  1
+tensor(0.5945)
+Network model dump to pred-lstm-20211113-200757/lstm-1.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  2
+tensor(0.6025)
+Network model dump to pred-lstm-20211113-200757/lstm-2.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  3
+tensor(0.6051)
+Network model dump to pred-lstm-20211113-200757/lstm-3.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  4
+tensor(0.6187)
+Network model dump to pred-lstm-20211113-200757/lstm-4.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  5
+tensor(0.6251)
+Network model dump to pred-lstm-20211113-200757/lstm-5.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  6
+tensor(0.6006)
+Network model dump to pred-lstm-20211113-200757/lstm-6.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  7
+tensor(0.5893)
+Network model dump to pred-lstm-20211113-200757/lstm-7.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  8
+tensor(0.6278)
+Network model dump to pred-lstm-20211113-200757/lstm-8.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  9
+tensor(0.6493)
+Network model dump to pred-lstm-20211113-200757/lstm-9.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232]
+ [0.30769232]
+ [0.30769232]]
+[0.30769232]
+Iter:  10
+tensor(0.6178)
+Network model dump to pred-lstm-20211113-200757/lstm-10.pkl
+[0.5944693088531494, 0.6025176644325256, 0.6051125526428223, 0.6187248826026917, 0.6251195073127747, 0.6005679965019226, 0.5893195271492004, 0.6277559995651245, 0.6493321061134338, 0.617844820022583]
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi2.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-201041', shuffle=True, str_time='20211113-201041', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  1
+tensor(0.6024)
+Network model dump to pred-lstm-20211113-201041/lstm-1.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  2
+tensor(0.5618)
+Network model dump to pred-lstm-20211113-201041/lstm-2.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  3
+tensor(0.5352)
+Network model dump to pred-lstm-20211113-201041/lstm-3.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  4
+tensor(0.6121)
+Network model dump to pred-lstm-20211113-201041/lstm-4.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  5
+tensor(0.5063)
+Network model dump to pred-lstm-20211113-201041/lstm-5.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  6
+tensor(0.5924)
+Network model dump to pred-lstm-20211113-201041/lstm-6.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  7
+tensor(0.7324)
+Network model dump to pred-lstm-20211113-201041/lstm-7.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  8
+tensor(0.5509)
+Network model dump to pred-lstm-20211113-201041/lstm-8.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  9
+tensor(0.5741)
+Network model dump to pred-lstm-20211113-201041/lstm-9.pkl
+           time  humidity  temperature
+0  1.522085e+09      21.0         40.0
+1  1.522085e+09      21.0         40.0
+2  1.522085e+09      21.0         40.0
+3  1.522085e+09      21.0         40.0
+4  1.522085e+09      22.0         40.0
+[[0.30769232 0.71428573]
+ [0.30769232 0.71428573]
+ [0.30769232 0.71428573]]
+[0.30769232]
+Iter:  10
+tensor(0.4935)
+Network model dump to pred-lstm-20211113-201041/lstm-10.pkl
+[0.602384090423584, 0.5618429780006409, 0.5351827144622803, 0.6121116280555725, 0.5063179135322571, 0.5923576354980469, 0.7324022054672241, 0.5509389638900757, 0.5741050243377686, 0.49354368448257446]
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi3.csv', flag_fuse=False, flag_multi=False, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-201321', shuffle=True, str_time='20211113-201321', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  1
+tensor(0.7576)
+Network model dump to pred-lstm-20211113-201321/lstm-1.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  2
+tensor(0.7463)
+Network model dump to pred-lstm-20211113-201321/lstm-2.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  3
+tensor(0.7528)
+Network model dump to pred-lstm-20211113-201321/lstm-3.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  4
+tensor(0.7643)
+Network model dump to pred-lstm-20211113-201321/lstm-4.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  5
+tensor(0.7612)
+Network model dump to pred-lstm-20211113-201321/lstm-5.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  6
+tensor(0.7520)
+Network model dump to pred-lstm-20211113-201321/lstm-6.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  7
+tensor(0.7379)
+Network model dump to pred-lstm-20211113-201321/lstm-7.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  8
+tensor(0.7570)
+Network model dump to pred-lstm-20211113-201321/lstm-8.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  9
+tensor(0.7393)
+Network model dump to pred-lstm-20211113-201321/lstm-9.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.        ]
+ [0.42857143]
+ [0.42857143]]
+[0.42857143]
+Iter:  10
+tensor(0.7564)
+Network model dump to pred-lstm-20211113-201321/lstm-10.pkl
+[0.7576473355293274, 0.7463342547416687, 0.7527561187744141, 0.7642561793327332, 0.7612073421478271, 0.7519867420196533, 0.7378851175308228, 0.7570047974586487, 0.7392756938934326, 0.7563921809196472]
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi3.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-201531', shuffle=True, str_time='20211113-201531', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  1
+tensor(0.7387)
+Network model dump to pred-lstm-20211113-201531/lstm-1.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  2
+tensor(0.7407)
+Network model dump to pred-lstm-20211113-201531/lstm-2.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  3
+tensor(0.7628)
+Network model dump to pred-lstm-20211113-201531/lstm-3.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  4
+tensor(0.7828)
+Network model dump to pred-lstm-20211113-201531/lstm-4.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  5
+tensor(0.7467)
+Network model dump to pred-lstm-20211113-201531/lstm-5.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  6
+tensor(0.7985)
+Network model dump to pred-lstm-20211113-201531/lstm-6.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  7
+tensor(0.7621)
+Network model dump to pred-lstm-20211113-201531/lstm-7.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  8
+tensor(0.8399)
+Network model dump to pred-lstm-20211113-201531/lstm-8.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  9
+tensor(0.7795)
+Network model dump to pred-lstm-20211113-201531/lstm-9.pkl
+           time  humidity  temperature
+0  1.522084e+09      43.0         27.0
+1  1.522084e+09      39.0         31.0
+2  1.522084e+09      39.0         31.0
+3  1.522084e+09      39.0         31.0
+4  1.522084e+09      39.0         31.0
+[[1.         0.        ]
+ [0.42857143 0.6666667 ]
+ [0.42857143 0.6666667 ]]
+[0.42857143]
+Iter:  10
+tensor(0.7817)
+Network model dump to pred-lstm-20211113-201531/lstm-10.pkl
+[0.7387223243713379, 0.7407414317131042, 0.7628410458564758, 0.7828466296195984, 0.7466607093811035, 0.798535168170929, 0.7620820999145508, 0.8399171829223633, 0.7794983983039856, 0.7816621661186218]
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi4.csv', flag_fuse=False, flag_multi=False, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-201743', shuffle=True, str_time='20211113-201743', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  1
+tensor(2.2321)
+Network model dump to pred-lstm-20211113-201743/lstm-1.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  2
+tensor(1.4711)
+Network model dump to pred-lstm-20211113-201743/lstm-2.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  3
+tensor(2.6484)
+Network model dump to pred-lstm-20211113-201743/lstm-3.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  4
+tensor(2.4070)
+Network model dump to pred-lstm-20211113-201743/lstm-4.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  5
+tensor(2.1161)
+Network model dump to pred-lstm-20211113-201743/lstm-5.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  6
+tensor(1.7574)
+Network model dump to pred-lstm-20211113-201743/lstm-6.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  7
+tensor(1.9959)
+Network model dump to pred-lstm-20211113-201743/lstm-7.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  8
+tensor(2.8010)
+Network model dump to pred-lstm-20211113-201743/lstm-8.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  9
+tensor(2.0008)
+Network model dump to pred-lstm-20211113-201743/lstm-9.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.        ]
+ [0.96428573]
+ [0.9285714 ]]
+[0.9285714]
+Iter:  10
+tensor(2.1811)
+Network model dump to pred-lstm-20211113-201743/lstm-10.pkl
+[2.2320711612701416, 1.4710569381713867, 2.648385524749756, 2.4069910049438477, 2.116117238998413, 1.7573939561843872, 1.995889663696289, 2.8009886741638184, 2.000788927078247, 2.181072473526001]
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi4.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-202132', shuffle=True, str_time='20211113-202132', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  1
+tensor(2.0053)
+Network model dump to pred-lstm-20211113-202132/lstm-1.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  2
+tensor(0.5837)
+Network model dump to pred-lstm-20211113-202132/lstm-2.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  3
+tensor(1.4336)
+Network model dump to pred-lstm-20211113-202132/lstm-3.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  4
+tensor(3.5869)
+Network model dump to pred-lstm-20211113-202132/lstm-4.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  5
+tensor(2.0943)
+Network model dump to pred-lstm-20211113-202132/lstm-5.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  6
+tensor(1.2893)
+Network model dump to pred-lstm-20211113-202132/lstm-6.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  7
+tensor(1.2555)
+Network model dump to pred-lstm-20211113-202132/lstm-7.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  8
+tensor(1.9881)
+Network model dump to pred-lstm-20211113-202132/lstm-8.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  9
+tensor(2.8102)
+Network model dump to pred-lstm-20211113-202132/lstm-9.pkl
+           time  humidity  temperature
+0  1.522082e+09      59.0         20.0
+1  1.522082e+09      58.0         21.0
+2  1.522082e+09      57.0         21.0
+3  1.522082e+09      57.0         21.0
+4  1.522082e+09      57.0         21.0
+[[1.         0.        ]
+ [0.96428573 0.06666667]
+ [0.9285714  0.06666667]]
+[0.9285714]
+Iter:  10
+tensor(2.6254)
+Network model dump to pred-lstm-20211113-202132/lstm-10.pkl
+[2.0052802562713623, 0.5836694240570068, 1.4336413145065308, 3.5868756771087646, 2.094298839569092, 1.2892547845840454, 1.2555047273635864, 1.988095760345459, 2.8101820945739746, 2.6254324913024902]
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi5.csv', flag_fuse=False, flag_multi=False, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-202514', shuffle=True, str_time='20211113-202514', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+         time humidity temperature
+0  1522085313       32          35
+1  1522085320       32          35
+2  1522085328       32          35
+3  1522085339       33          35
+4  1522085347       33          35
+Traceback (most recent call last):
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 1537, in _ensure_numeric
+    x = float(x)
+ValueError: could not convert string to float: '32323233333333333434343434343434263434343435353636363636363636363636363636363636363636363636363636363636373737373736202630323739414141414141414142424343434344444443414141414041404040404040404039393939393838383838393838383736363636363535353534343534343434343433333434333434343434343433333333333333333333333332323333333333333333343434343434333434343433343433343434333333343434343434353434353535343435363534343434343333333333333333333333333333333333333333333333333334353535363534343333353434343433333333333537393941414344424242424242424242424242434343434343434343434343434343434343424242424243434243434343434343 None4141414041414141414140404040414242 None4242424242424240424243474545454545 None444443434242 None424343434342434343444444 None444444444544444443434343434243434343444444444444'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 1541, in _ensure_numeric
+    x = complex(x)
+ValueError: complex() arg is a malformed string
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "main.py", line 376, in <module>
+    main(cfgs)
+  File "main.py", line 326, in main
+    data_args = get_dataset(file_name=args.file_name, col_name_tar=args.col_name_tar,
+  File "main.py", line 77, in get_dataset
+    tar_mean = df[col_name_tar][:train_len].mean()
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/generic.py", line 11118, in mean
+    return NDFrame.mean(self, axis, skipna, level, numeric_only, **kwargs)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/generic.py", line 10726, in mean
+    return self._stat_function(
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/generic.py", line 10711, in _stat_function
+    return self._reduce(
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/series.py", line 4182, in _reduce
+    return op(delegate, skipna=skipna, **kwds)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 73, in _f
+    return f(*args, **kwargs)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 135, in f
+    result = alt(values, axis=axis, skipna=skipna, **kwds)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 394, in new_func
+    result = func(values, axis=axis, skipna=skipna, mask=mask, **kwargs)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 633, in nanmean
+    the_sum = _ensure_numeric(values.sum(axis, dtype=dtype_sum))
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 1544, in _ensure_numeric
+    raise TypeError(f"Could not convert {x} to numeric") from err
+TypeError: Could not convert 32323233333333333434343434343434263434343435353636363636363636363636363636363636363636363636363636363636373737373736202630323739414141414141414142424343434344444443414141414041404040404040404039393939393838383838393838383736363636363535353534343534343434343433333434333434343434343433333333333333333333333332323333333333333333343434343434333434343433343433343434333333343434343434353434353535343435363534343434343333333333333333333333333333333333333333333333333334353535363534343333353434343433333333333537393941414344424242424242424242424242434343434343434343434343434343434343424242424243434243434343434343 None4141414041414141414140404040414242 None4242424242424240424243474545454545 None444443434242 None424343434342434343444444 None444444444544444443434343434243434343444444444444 to numeric
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi5.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-202516', shuffle=True, str_time='20211113-202516', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+         time humidity temperature
+0  1522085313       32          35
+1  1522085320       32          35
+2  1522085328       32          35
+3  1522085339       33          35
+4  1522085347       33          35
+Traceback (most recent call last):
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 1537, in _ensure_numeric
+    x = float(x)
+ValueError: could not convert string to float: '32323233333333333434343434343434263434343435353636363636363636363636363636363636363636363636363636363636373737373736202630323739414141414141414142424343434344444443414141414041404040404040404039393939393838383838393838383736363636363535353534343534343434343433333434333434343434343433333333333333333333333332323333333333333333343434343434333434343433343433343434333333343434343434353434353535343435363534343434343333333333333333333333333333333333333333333333333334353535363534343333353434343433333333333537393941414344424242424242424242424242434343434343434343434343434343434343424242424243434243434343434343 None4141414041414141414140404040414242 None4242424242424240424243474545454545 None444443434242 None424343434342434343444444 None444444444544444443434343434243434343444444444444'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 1541, in _ensure_numeric
+    x = complex(x)
+ValueError: complex() arg is a malformed string
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "main.py", line 376, in <module>
+    main(cfgs)
+  File "main.py", line 326, in main
+    data_args = get_dataset(file_name=args.file_name, col_name_tar=args.col_name_tar,
+  File "main.py", line 77, in get_dataset
+    tar_mean = df[col_name_tar][:train_len].mean()
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/generic.py", line 11118, in mean
+    return NDFrame.mean(self, axis, skipna, level, numeric_only, **kwargs)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/generic.py", line 10726, in mean
+    return self._stat_function(
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/generic.py", line 10711, in _stat_function
+    return self._reduce(
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/series.py", line 4182, in _reduce
+    return op(delegate, skipna=skipna, **kwds)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 73, in _f
+    return f(*args, **kwargs)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 135, in f
+    result = alt(values, axis=axis, skipna=skipna, **kwds)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 394, in new_func
+    result = func(values, axis=axis, skipna=skipna, mask=mask, **kwargs)
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 633, in nanmean
+    the_sum = _ensure_numeric(values.sum(axis, dtype=dtype_sum))
+  File "/app/common/anaconda3/2021.05/lib/python3.8/site-packages/pandas/core/nanops.py", line 1544, in _ensure_numeric
+    raise TypeError(f"Could not convert {x} to numeric") from err
+TypeError: Could not convert 32323233333333333434343434343434263434343435353636363636363636363636363636363636363636363636363636363636373737373736202630323739414141414141414142424343434344444443414141414041404040404040404039393939393838383838393838383736363636363535353534343534343434343433333434333434343434343433333333333333333333333332323333333333333333343434343434333434343433343433343434333333343434343434353434353535343435363534343434343333333333333333333333333333333333333333333333333334353535363534343333353434343433333333333537393941414344424242424242424242424242434343434343434343434343434343434343424242424243434243434343434343 None4141414041414141414140404040414242 None4242424242424240424243474545454545 None444443434242 None424343434342434343444444 None444444444544444443434343434243434343444444444444 to numeric
+nohup: ignoring input
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi5.csv', flag_fuse=False, flag_multi=False, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-212650', shuffle=True, str_time='20211113-212650', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  1
+tensor(1.0867)
+Network model dump to pred-lstm-20211113-212650/lstm-1.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  2
+tensor(1.2407)
+Network model dump to pred-lstm-20211113-212650/lstm-2.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  3
+tensor(1.1410)
+Network model dump to pred-lstm-20211113-212650/lstm-3.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  4
+tensor(1.4593)
+Network model dump to pred-lstm-20211113-212650/lstm-4.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  5
+tensor(1.1707)
+Network model dump to pred-lstm-20211113-212650/lstm-5.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  6
+tensor(1.3041)
+Network model dump to pred-lstm-20211113-212650/lstm-6.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  7
+tensor(1.4157)
+Network model dump to pred-lstm-20211113-212650/lstm-7.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  8
+tensor(1.2363)
+Network model dump to pred-lstm-20211113-212650/lstm-8.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  9
+tensor(1.1266)
+Network model dump to pred-lstm-20211113-212650/lstm-9.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445]
+ [0.44444445]
+ [0.44444445]]
+[0.4814815]
+Iter:  10
+tensor(1.1759)
+Network model dump to pred-lstm-20211113-212650/lstm-10.pkl
+[1.0867362022399902, 1.2406902313232422, 1.140952229499817, 1.4593172073364258, 1.1707433462142944, 1.3040872812271118, 1.4157174825668335, 1.2362929582595825, 1.1265826225280762, 1.175887107849121]
+Namespace(col_name_tar='humidity', file_name='../dataset/_TS/gnfuv-pi5.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211113-213112', shuffle=True, str_time='20211113-213112', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  1
+tensor(1.2673)
+Network model dump to pred-lstm-20211113-213112/lstm-1.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  2
+tensor(1.6566)
+Network model dump to pred-lstm-20211113-213112/lstm-2.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  3
+tensor(1.2713)
+Network model dump to pred-lstm-20211113-213112/lstm-3.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  4
+tensor(1.3947)
+Network model dump to pred-lstm-20211113-213112/lstm-4.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  5
+tensor(1.2318)
+Network model dump to pred-lstm-20211113-213112/lstm-5.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  6
+tensor(1.3924)
+Network model dump to pred-lstm-20211113-213112/lstm-6.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  7
+tensor(1.0682)
+Network model dump to pred-lstm-20211113-213112/lstm-7.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  8
+tensor(1.4628)
+Network model dump to pred-lstm-20211113-213112/lstm-8.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  9
+tensor(1.3389)
+Network model dump to pred-lstm-20211113-213112/lstm-9.pkl
+         time  humidity  temperature
+0  1522085313        32           35
+1  1522085320        32           35
+2  1522085328        32           35
+3  1522085339        33           35
+4  1522085347        33           35
+[[0.44444445 0.875     ]
+ [0.44444445 0.875     ]
+ [0.44444445 0.875     ]]
+[0.4814815]
+Iter:  10
+tensor(1.5064)
+Network model dump to pred-lstm-20211113-213112/lstm-10.pkl
+[1.2672970294952393, 1.6565556526184082, 1.2713422775268555, 1.3946954011917114, 1.2318178415298462, 1.392433762550354, 1.068222165107727, 1.4627652168273926, 1.3388698101043701, 1.5063692331314087]
+nohup: ignoring input
+Namespace(col_name_tar='Slowness_in_traffic', file_name='../dataset/_TS/traffic.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211114-101244', shuffle=True, str_time='20211114-101244', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  1
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-1.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  2
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-2.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  3
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-3.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  4
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-4.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  5
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-5.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  6
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-6.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  7
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-7.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  8
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-8.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  9
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-9.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.    nan  nan 0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  10
+tensor(nan)
+Network model dump to pred-lstm-20211114-101244/lstm-10.pkl
+[nan, nan, nan, nan, nan, nan, nan, nan, nan, nan]
+nohup: ignoring input
+Namespace(col_name_tar='Slowness_in_traffic', file_name='../dataset/_TS/traffic.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211114-135702', shuffle=True, str_time='20211114-135702', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  1
+tensor(4.7255)
+Network model dump to pred-lstm-20211114-135702/lstm-1.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  2
+tensor(6.0500)
+Network model dump to pred-lstm-20211114-135702/lstm-2.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  3
+tensor(5.3211)
+Network model dump to pred-lstm-20211114-135702/lstm-3.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  4
+tensor(6.1007)
+Network model dump to pred-lstm-20211114-135702/lstm-4.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  5
+tensor(5.6319)
+Network model dump to pred-lstm-20211114-135702/lstm-5.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  6
+tensor(4.9088)
+Network model dump to pred-lstm-20211114-135702/lstm-6.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  7
+tensor(4.2528)
+Network model dump to pred-lstm-20211114-135702/lstm-7.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  8
+tensor(4.9835)
+Network model dump to pred-lstm-20211114-135702/lstm-8.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  9
+tensor(5.5279)
+Network model dump to pred-lstm-20211114-135702/lstm-9.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  10
+tensor(5.8182)
+Network model dump to pred-lstm-20211114-135702/lstm-10.pkl
+[4.725512981414795, 6.050005912780762, 5.321056365966797, 6.100725173950195, 5.6319403648376465, 4.908820152282715, 4.25283145904541, 4.983517646789551, 5.527894020080566, 5.818167209625244]
+nohup: ignoring input
+Namespace(col_name_tar='Slowness_in_traffic', file_name='../dataset/_TS/traffic.csv', flag_fuse=False, flag_multi=True, iterations=10, lr=0.001, lstm_hid_size=3, n_epochs=200, n_workers=4, name_model='lstm', save='pred-lstm-20211114-145244', shuffle=True, str_time='20211114-145244', tag_norm='min-max', train_ratio=0.6666666666666666, trn_batch_size=12, vld_batch_size=12)
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  1
+tensor(4.3521)
+Network model dump to pred-lstm-20211114-145244/lstm-1.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  2
+tensor(6.4712)
+Network model dump to pred-lstm-20211114-145244/lstm-2.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  3
+tensor(5.2160)
+Network model dump to pred-lstm-20211114-145244/lstm-3.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  4
+tensor(4.8149)
+Network model dump to pred-lstm-20211114-145244/lstm-4.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  5
+tensor(4.8370)
+Network model dump to pred-lstm-20211114-145244/lstm-5.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  6
+tensor(4.9328)
+Network model dump to pred-lstm-20211114-145244/lstm-6.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  7
+tensor(4.7460)
+Network model dump to pred-lstm-20211114-145244/lstm-7.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  8
+tensor(5.3013)
+Network model dump to pred-lstm-20211114-145244/lstm-8.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  9
+tensor(4.6417)
+Network model dump to pred-lstm-20211114-145244/lstm-9.pkl
+   Hour (Coded)  Immobilized_bus  ...  Intermittent_Semaphore  Slowness_in_traffic
+0             1                0  ...                       0                    4
+1             2                0  ...                       0                    6
+2             3                0  ...                       0                    8
+3             4                0  ...                       0                    9
+4             5                0  ...                       0                   11
+
+[5 rows x 18 columns]
+[[0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.05]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.15]
+ [0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+  0.   0.   0.25]]
+[0.3]
+Iter:  10
+tensor(4.6626)
+Network model dump to pred-lstm-20211114-145244/lstm-10.pkl
+[4.3520612716674805, 6.4712419509887695, 5.215991020202637, 4.814877986907959, 4.836973667144775, 4.9327921867370605, 4.745960712432861, 5.301270008087158, 4.641681671142578, 4.662572860717773]
