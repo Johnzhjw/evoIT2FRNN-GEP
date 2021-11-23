@@ -1,4 +1,4 @@
-function genfigBER_trace(iters, Datas, tarINDs, strInst, legendName, tmpStr, flagLG, flagLOG)
+function genfigBER_trace_MobSink(iters, Datas, strInst, legendName, tmpStr, flagLG)
 
 %  YMATRIX1:  errorbar y 矩阵数据
 %  DMATRIX1:  errorbar delta 矩阵数据
@@ -132,8 +132,9 @@ colors ={
 % end
 
 %%
-% tarINDs = 17:24; %1:size(Datas,1);
-% lenINDs = length(tarINDs);
+ind = 4;
+tarINDs = 1:size(Datas,ind);%15;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+lenINDs = length(tarINDs);
 
 %%
 count = 1;
@@ -142,23 +143,11 @@ count = 1;
 % all_min_over_trace = zeros(length(algs), length(modelName), 3, length(probs), nObj, NTRACE+1);
 for i = tarINDs
     %
-    tmp = Datas(i,1,1,1,1,:);
+    tmp = Datas(1,1,1,i,1,:);
     tmp = tmp(:);
     plot(iters,tmp,'LineWidth',1,...
-            'DisplayName',strrep(legendName{count,1,1},'_','\_')...
+            'DisplayName',legendName{count}...
             ,'Marker',Markers{count},'MarkerSize',Markersizes{count},'color',colors{count});
-    %
-    tmp = Datas(i,1,2,1,1,:);
-    tmp = tmp(:);
-    plot(iters,tmp,'LineWidth',1,...
-            'DisplayName',strrep(legendName{count,1,2},'_','\_')...
-            ,'Marker',Markers{count},'MarkerSize',Markersizes{count},'color',colors{count},'LineStyle','--');
-    %
-    tmp = Datas(i,1,3,1,1,:);
-    tmp = tmp(:);
-    plot(iters,tmp,'LineWidth',1,...
-            'DisplayName',strrep(legendName{count,1,3},'_','\_')...
-            ,'Marker',Markers{count},'MarkerSize',Markersizes{count},'color',colors{count},'LineStyle',':');
     %
 %     tmp = Datas(i,1,4,1,1,:);
 %     tmp = tmp(:);
@@ -186,19 +175,9 @@ box(axes1,'on');
 set(axes1,'FontSize',11,'FontWeight','bold','XGrid','on',...
     'YGrid','on','YMinorTick','on');
 
-% % 创建 legend
-% legend1 = legend(axes1,'show');
-% set(legend1,'Location','best');
-% 
 % 创建 legend
 if flagLG
-    legend1 = legend(axes1,'show');%,...
-    %'Position',[0.456785718543189 0.126349216283313 0.358928562913622 0.794047596057257]);
-    %set(legend1);
-    %gridLegend(axes1,2)
-    legend1.NumColumns = 2;
-end
-
-if flagLOG
-    set(axes1,'YScale','log');
+    legend1 = legend(axes1,'show');
+    set(legend1,...
+    'Position',[0.456785718543189 0.126349216283313 0.358928562913622 0.794047596057257]);
 end

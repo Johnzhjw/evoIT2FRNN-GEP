@@ -1,4 +1,4 @@
-function createfigure_FuzzyRule(YMatrix1, tmp_tt)
+function createfigure_FuzzyRule(YMatrix1, tmp_tt, xstr)
 %CREATEFIGURE(YMATRIX1)
 %  YMATRIX1:  y 数据的矩阵
 
@@ -18,7 +18,7 @@ set(plot1(2),'DisplayName','#Operator','LineStyle','--');
 set(plot1(3),'DisplayName','#Input','LineStyle','-.');
 
 % 创建 xlabel
-xlabel('Fuzzy rule ID');
+xlabel(xstr);
 
 % 创建 ylabel
 ylabel('Count');
@@ -27,11 +27,17 @@ ylabel('Count');
 title(tmp_tt);
 
 % 取消以下行的注释以保留坐标轴的 X 范围
-xlim(axes1,[1 50]);
+xlim(axes1,[1 size(YMatrix1,1)]);
 box(axes1,'on');
 % 设置其余坐标轴属性
-set(axes1,'FontSize',12,'FontWeight','bold','YTick',[0 2 4 6 8 10],'XTick',...
-    [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50]);
+Ymax = max(max(YMatrix1));
+Ymax = Ymax+mod(5-mod(Ymax,5),5);
+Ygap = Ymax/5;
+
+set(axes1,'FontSize',12,'FontWeight','bold','YTick',0:Ygap:Ymax,'XTick',1:size(YMatrix1,1));
+
+set(gcf,'unit','centimeters','position',[10 5 max(size(YMatrix1,1)/50*40,15) 5])
+
 % 创建 legend
-legend(axes1,'show');
+legend(axes1,'show','Location','best');
 

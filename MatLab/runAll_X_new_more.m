@@ -37,6 +37,14 @@ algs = {
     'PCMLIA-Pseu-BDFRNN'
     'PCMLIA-Pseu-BFGRNN'
     'PCMLIA-Pseu-BDFGRNN'
+    'PCMLIA-Pseu-F1RNN'
+    'PCMLIA-Pseu-DF1RNN'
+    'PCMLIA-Pseu-F1GRNN'
+    'PCMLIA-Pseu-DF1GRNN'
+    'PCMLIA-Pseu-BF1RNN'
+    'PCMLIA-Pseu-BDF1RNN'
+    'PCMLIA-Pseu-BF1GRNN'
+    'PCMLIA-Pseu-BDF1GRNN'
 };
 for i = 1:length(algs)
     algs{i} = strrep(algs{i}, 'PCMLIA', 'PCMLIA-ADE');
@@ -67,16 +75,25 @@ fnms = {
     'exp1_pseu'
     'exp1_pseu'
     'exp1_pseu'
+    'exp1_1pseu'
+    'exp1_1pseu'
+    'exp1_1pseu'
+    'exp1_1pseu'
+    'exp1_1pseu'
+    'exp1_1pseu'
+    'exp1_1pseu'
+    'exp1_1pseu'
 };
 for i = 1:length(fnms)
-    fnms{i} = strrep(fnms{i}, 'exp1_opt', 'PC');
-    fnms{i} = strrep(fnms{i}, 'exp1_w', 'PC-w');
-    fnms{i} = strrep(fnms{i}, 'exp1_pseu', 'PC-Pseu');
+    fnms{i} = strrep(fnms{i}, 'exp1_opt', 'trial07');
+    fnms{i} = strrep(fnms{i}, 'exp1_w', 'trial08');
+    fnms{i} = strrep(fnms{i}, 'exp1_pseu', 'trial06');
+    fnms{i} = strrep(fnms{i}, 'exp1_1pseu', 'trial09');
 end
 
 mainfils = cell(1, length(algs));
 for i = 1:length(mainfils)
-    mainfils{i} = 'EXPs';
+    mainfils{i} = 'exp';
 end
 
 filestrs = cell(1, length(algs));
@@ -90,28 +107,30 @@ probs={
     '0941.HK'
     '1288.HK'
     '0005.HK'
-%     'gnfuv-pi2'  
-%     'gnfuv-pi3'  
-%     'gnfuv-pi4'  
-%     'gnfuv-pi5'  
-%     'hungaryChickenpox'  
-%     'SML2010-DATA-1'  
-%     'SML2010-DATA-2'
-%     'Daily-Demand-Forecasting-Orders'
+    'gnfuv-pi2'  
+    'gnfuv-pi3'  
+    'gnfuv-pi4'  
+    'gnfuv-pi5'  
+    'hungaryChickenpox'  
+    'SML2010-DATA-1'  
+    'SML2010-DATA-2'
+    'traffic'
+    'Daily-Demand-Forecasting-Orders'
 };
 
 probstrs={
     '0941'
     '1288'
     '0005'
-%     'gnfuv-pi2'  
-%     'gnfuv-pi3'  
-%     'gnfuv-pi4'  
-%     'gnfuv-pi5'  
-%     'hungaryChickenpox'  
-%     'SML2010-DATA-1'  
-%     'SML2010-DATA-2'
-%     'Daily_Demand_Forecasting_Orders'
+    'gnfuv-pi2'  
+    'gnfuv-pi3'  
+    'gnfuv-pi4'  
+    'gnfuv-pi5'  
+    'hungaryChickenpox'  
+    'SML2010-DATA-1'  
+    'SML2010-DATA-2'
+    'traffic'
+    'Daily_Demand_Forecasting_Orders'
 };
 
 mdstrs = {
@@ -139,35 +158,28 @@ mdstrs = {
     'evoBDFRNN_Predict_'
     'evoBFGRNN_Predict_'
     'evoBDFGRNN_Predict_'
+    'evoFRNN_Predict_'
+    'evoDFRNN_Predict_'
+    'evoFGRNN_Predict_'
+    'evoDFGRNN_Predict_'
+    'evoBFRNN_Predict_'
+    'evoBDFRNN_Predict_'
+    'evoBFGRNN_Predict_'
+    'evoBDFGRNN_Predict_'
 };
 
-dims = cell(length(algs), length(probs), nRun);
+% dims = cell(length(algs), length(probs), nRun);
 
 probName = cell(1, length(algs));
-% {
-%     {'evoFRNN_Predict_0941'  'evoFRNN_Predict_1288'  'evoFRNN_Predict_0005'  'evoFRNN_Predict_gnfuv-pi2'  'evoFRNN_Predict_gnfuv-pi3'  'evoFRNN_Predict_gnfuv-pi4'  'evoFRNN_Predict_gnfuv-pi5'  'evoFRNN_Predict_hungaryChickenpox'  'evoFRNN_Predict_SML2010-DATA-1'  'evoFRNN_Predict_SML2010-DATA-2'}
-%     {'evoDFRNN_Predict_0941' 'evoDFRNN_Predict_1288' 'evoDFRNN_Predict_0005'}
-%     {'evoFGRNN_Predict_0941' 'evoFGRNN_Predict_1288' 'evoFGRNN_Predict_0005'}
-%     {'evoDFGRNN_Predict_0941' 'evoDFGRNN_Predict_1288' 'evoDFGRNN_Predict_0005'}
-%     {'evoBFRNN_Predict_0941'  'evoBFRNN_Predict_1288'  'evoBFRNN_Predict_0005'}
-%     {'evoBDFRNN_Predict_0941' 'evoBDFRNN_Predict_1288' 'evoBDFRNN_Predict_0005'}
-%     {'evoBFGRNN_Predict_0941' 'evoBFGRNN_Predict_1288' 'evoBFGRNN_Predict_0005'}
-%     {'evoBDFGRNN_Predict_0941' 'evoBDFGRNN_Predict_1288' 'evoBDFGRNN_Predict_0005'}
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     {'evoFRNN_Predict_0941'  'evoFRNN_Predict_1288'  'evoFRNN_Predict_0005'}
-%     {'evoDFRNN_Predict_0941' 'evoDFRNN_Predict_1288' 'evoDFRNN_Predict_0005'}
-%     {'evoFGRNN_Predict_0941' 'evoFGRNN_Predict_1288' 'evoFGRNN_Predict_0005'}
-%     {'evoDFGRNN_Predict_0941' 'evoDFGRNN_Predict_1288' 'evoDFGRNN_Predict_0005'}
-%     {'evoBFRNN_Predict_0941'  'evoBFRNN_Predict_1288'  'evoBFRNN_Predict_0005'}
-%     {'evoBDFRNN_Predict_0941' 'evoBDFRNN_Predict_1288' 'evoBDFRNN_Predict_0005'}
-%     {'evoBFGRNN_Predict_0941' 'evoBFGRNN_Predict_1288' 'evoBFGRNN_Predict_0005'}
-%     {'evoBDFGRNN_Predict_0941' 'evoBDFGRNN_Predict_1288' 'evoBDFGRNN_Predict_0005'}
-% };
 
 for i = 1:length(probName)
     probName{i} = cell(1, length(probstrs));
     for j = 1:length(probName{i})
-        probName{i}{j} = sprintf('%s%s', mdstrs{i}, probstrs{j});
+        if contains(algs{i}, 'F1')
+            probName{i}{j} = sprintf('%s%s_flagT2_0', mdstrs{i}, probstrs{j});
+        else
+            probName{i}{j} = sprintf('%s%s', mdstrs{i}, probstrs{j});
+        end
     end
     for j = 1:3
         probName{i}{j} = strrep(probName{i}{j}, 'Predict_', 'Predict_Stock_');
@@ -192,137 +204,23 @@ nPop_all = cell(1, length(algs));
 maxFEs=2e3;
 
 %%
-for i = 1 : length(probs)
-    for j = 1 : nRun
-        if i <= 3
-            dims{1}{i}{j} = 1271;
-            dims{2}{i}{j} = 1271;
-            dims{3}{i}{j} = 2121;
-            dims{4}{i}{j} = 2121;
-            dims{5}{i}{j} = 2426;
-            dims{6}{i}{j} = 2426;
-            dims{7}{i}{j} = 3276;
-            dims{8}{i}{j} = 3276;
-        elseif i <= 7
-            dims{1}{i}{j} = 408;
-            dims{2}{i}{j} = 408;
-            dims{3}{i}{j} = 663;
-            dims{4}{i}{j} = 663;
-            dims{5}{i}{j} = 982;
-            dims{6}{i}{j} = 982;
-            dims{7}{i}{j} = 1475;
-            dims{8}{i}{j} = 1475;
-        elseif i <= 8
-            dims{1}{i}{j} = 408;
-            dims{2}{i}{j} = 408;
-            dims{3}{i}{j} = 663;
-            dims{4}{i}{j} = 663;
-            dims{5}{i}{j} = 11104;
-            dims{6}{i}{j} = 11104;
-            dims{7}{i}{j} = 11954;
-            dims{8}{i}{j} = 11954;
-        elseif i <= 10
-            dims{1}{i}{j} = 408;
-            dims{2}{i}{j} = 408;
-            dims{3}{i}{j} = 663;
-            dims{4}{i}{j} = 663;
-            dims{5}{i}{j} = 10026;
-            dims{6}{i}{j} = 10026;
-            dims{7}{i}{j} = 10876;
-            dims{8}{i}{j} = 10876;
-        else
-            dims{1}{i}{j} = 408;
-            dims{2}{i}{j} = 408;
-            dims{3}{i}{j} = 663;
-            dims{4}{i}{j} = 663;
-            dims{5}{i}{j} = 6253;
-            dims{6}{i}{j} = 6253;
-            dims{7}{i}{j} = 7103;
-            dims{8}{i}{j} = 7103;
-        end
-    end
-end
-incre = 10;
-for i = 1 : length(probs)
-    for iAlg = 9 : 12
-        for j = 1 : nRun
-            if i <= 3
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            elseif i <= 7
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            elseif i <= 8
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            elseif i <= 10
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            else
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            end
-        end
-    end
-    for iAlg = 13 : 16
-        for j = 1 : nRun
-            if i <= 3
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            elseif i <= 7
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            elseif i <= 8
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            elseif i <= 10
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            else
-                dims{iAlg}{i}{j} = dims{iAlg-8}{i}{j}+incre;
-            end
-        end
-    end
-    for iAlg = 17 : 20
-        for j = 1 : nRun
-            if i <= 3
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            elseif i <= 7
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            elseif i <= 8
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            elseif i <= 10
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            else
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            end
-        end
-    end
-    for iAlg = 21 : 24
-        for j = 1 : nRun
-            if i <= 3
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            elseif i <= 7
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            elseif i <= 8
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            elseif i <= 10
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            else
-                dims{iAlg}{i}{j} = dims{iAlg-16}{i}{j}+incre;
-            end
-        end
-    end
-end
-
-%%
 for i = 1:length(algs)
     nobjs{i} = 3;
     nPop_all{i} = 12;
     nMPI{i} = 96;
-    filestrs{i} = 'DPCCMOLSIA';
-    PFstrs{i} = 'DPCCMOLSIA_FUN';
+    filestrs{i} = 'DPCCMOLSIA_MP_III';
+    PFstrs{i} = 'DPCCMOLSIA_MP_III_FUN';
     PFfilestrs{i} = 'PF';
-    PSstrs{i} = 'DPCCMOLSIA_VAR';
+    PSstrs{i} = 'DPCCMOLSIA_MP_III_VAR';
     PSfilestrs{i} = 'PS';
-    TIMEstrs{i} = 'TIME_DPCCMOLSIA';
+    TIMEstrs{i} = 'TIME_DPCCMOLSIA_MP_III';
 end
 
-tINDs    = 1:24;
+tINDs    = 1:length(algs);
 algs     = algs(tINDs);
 fnms     = fnms(tINDs);
-dims     = dims(tINDs);
+mdstrs   = mdstrs(tINDs);
+% dims     = dims(tINDs);
 nobjs    = nobjs(tINDs);
 nPop_all = nPop_all(tINDs);
 nMPI     = nMPI(tINDs);
@@ -330,6 +228,14 @@ filestrs = filestrs(tINDs);
 PFstrs   = PFstrs(tINDs);
 PSstrs   = PSstrs(tINDs);
 TIMEstrs = TIMEstrs(tINDs);
+
+tINDs_prob = 1:11;
+probs = probs(tINDs_prob);
+probstrs = probstrs(tINDs_prob);
+for i = 1:length(probName)
+%     dims{i} = dims{i}(tINDs_prob);
+    probName{i} = probName{i}(tINDs_prob);
+end
 
 %%
 tarINDs = 1:length(algs);%15;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,10 +257,10 @@ ALL_minInv_objs_run_NN = cell(length(candidRand),1);
 
 %%
 for iRnd = 1:length(candidRand)
-    for i = 1:length(fnms)
-        algs{i} = strrep(algs{i}, 'PCMLEA', candidRand{iRnd});
-        fnms{i} = strrep(fnms{i}, 'PCMLEA', candidRand{iRnd});
-    end
+%     for i = 1:length(fnms)
+%         algs{i} = strrep(algs{i}, 'PCMLEA', candidRand{iRnd});
+%         fnms{i} = strrep(fnms{i}, 'PCMLEA', candidRand{iRnd});
+%     end
     
     curAlg = candidRand{iRnd};
     
@@ -366,14 +272,14 @@ for iRnd = 1:length(candidRand)
     ALL_min_objs_run_NN{iRnd} = all_min_over_run;
     ALL_minInd_objs_run_NN{iRnd} = all_minInd_over_run;
     ALL_minInv_objs_run_NN{iRnd} = all_minInv_over_run;
-    plotBER_trace;
+    plotBER_trace_comp;
     readTIME;
     ALL_TIMES_NN{iRnd} = all_TIMEs;
 
-    for i = 1:length(fnms)
-        algs{i} = strrep(algs{i}, candidRand{iRnd}, 'PCMLEA');
-        fnms{i} = strrep(fnms{i}, candidRand{iRnd}, 'PCMLEA');
-    end
+%     for i = 1:length(fnms)
+%         algs{i} = strrep(algs{i}, candidRand{iRnd}, 'PCMLEA');
+%         fnms{i} = strrep(fnms{i}, candidRand{iRnd}, 'PCMLEA');
+%     end
 end
 
 tmp_sz = 3;
@@ -385,6 +291,8 @@ table_NN_all_min_min_ACE_run = zeros(length(candidRand)*length(probs)*tmp_sz, le
 table_NN_all_min_min2_ACE_run = zeros(length(candidRand)*length(probs)*tmp_sz, lenINDs);
 table_NN_all_min_minInv_ACE_run = cell(length(candidRand)*length(probs)*tmp_sz, lenINDs);
 table_NN_all_both_min_min_ACE_run = zeros(length(candidRand)*length(probs)*tmp_sz, lenINDs);
+table_NN_all_mean_final_ACE_run = zeros(length(candidRand)*length(probs)*tmp_sz, lenINDs);
+table_NN_all_both_mean_final_ACE_run = zeros(length(candidRand)*length(probs)*tmp_sz, lenINDs);
 
 [tmp_str_val tmp_str_i] = sort(candidRand);
 
@@ -437,12 +345,12 @@ for iRnd_r = 1:length(candidRand)
                     iInv = tmp{1}(2);
                     table_NN_all_both_min_min_ACE_run(tmp_r-2, iExpSet) = ALL_PFs_4_run_trace_NN{iRnd}{iExpSet,1,1,iProb,iRun,iTrc}(iInv,1);
                     table_NN_all_both_min_min_ACE_run(tmp_r-1, iExpSet) = ALL_PFs_4_run_trace_NN{iRnd}{iExpSet,1,2,iProb,iRun,iTrc}(iInv,1);
-                    tmpInds = ALL_minInd_objs_run_NN{iRnd}(iExpSet,1,i,iProb,1,:);
+                    tmpInds = ALL_minInd_objs_run_NN{iRnd}(iExpSet,1,1,iProb,1,:);
                     mean_train = 0;
                     mean_test  = 0;
                     for iInd = 1:length(tmpInds)
                         iRun = iInd;
-                        tmp = ALL_minInv_objs_run_NN{iRnd}(iExpSet,1,i,iProb,1,iInd);
+                        tmp = ALL_minInv_objs_run_NN{iRnd}(iExpSet,1,1,iProb,1,iInd);
                         iTrc = tmp{1}(1);
                         iInv = tmp{1}(2);
                         mean_train = mean_train + ALL_PFs_4_run_trace_NN{iRnd}{iExpSet,1,1,iProb,iRun,iTrc}(iInv,1);
@@ -451,12 +359,20 @@ for iRnd_r = 1:length(candidRand)
                     table_NN_all_both_mean_min_ACE_run(tmp_r-2, iExpSet) = mean_train/length(tmpInds);
                     table_NN_all_both_mean_min_ACE_run(tmp_r-1, iExpSet) = mean_test/length(tmpInds);
                 end
+                table_NN_all_mean_final_ACE_run(tmp_r, iExpSet) = all_mean_over_trace(iExpSet,1,i,iProb,1,end);
+                table_NN_all_both_mean_final_ACE_run(tmp_r, iExpSet) = all_mean_over_trace2(iExpSet,1,i,iProb,1,end);
             end
         end
     end
 end
 
-tmp_0941 = table_NN_all_min_min_ACE_run(1:2,:)*9.30368422;
-tmp_1288 = table_NN_all_min_min_ACE_run(3:4,:)*0.45112545;
-tmp_0005 = table_NN_all_min_min_ACE_run(5:6,:)*11.4176450379;
-
+%%
+tmp_inds = table_NN_all_min_minInv_ACE_run(1:3:33,25:32);
+tmp_ind_table = zeros(88,3);
+for i=1:11
+    for j=1:8
+        tmp_ind_table(j+(i-1)*8,1)=tmp_inds{i,j}{1};
+        tmp_ind_table(j+(i-1)*8,2)=tmp_inds{i,j}{2}(1);
+        tmp_ind_table(j+(i-1)*8,3)=tmp_inds{i,j}{2}(2);
+    end
+end

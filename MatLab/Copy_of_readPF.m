@@ -26,32 +26,22 @@ for iAlg = 1:length(algs)
                 for n=1:nRun
                     switch k
                         case 1
-                            fname = sprintf('%s_FUN_%s_TRAIN_OBJ%d_VAR*',...
-                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg});
+                            fname = sprintf('%s_FUN_%s_TRAIN_OBJ%d_VAR%d_MPI%d_RUN%d',...
+                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg}, dims{iAlg}{j}{n}, nMPI{iAlg}, n);
                         case 2
-                            fname = sprintf('%s_FUN_%s_TEST_OBJ%d_VAR*',...
-                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg});
+                            fname = sprintf('%s_FUN_%s_TEST_OBJ%d_VAR%d_MPI%d_RUN%d',...
+                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg}, dims{iAlg}{j}{n}, nMPI{iAlg}, n);
                         case 3
-                            fname = sprintf('%s_FUN_%s_OBJ%d_VAR*',...
-                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg});
+                            fname = sprintf('%s_FUN_%s_OBJ%d_VAR%d_MPI%d_RUN%d',...
+                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg}, dims{iAlg}{j}{n}, nMPI{iAlg}, n);
                         case 4
-                            fname = sprintf('%s_FUN_%s_VALIDATION_OBJ%d_VAR*',...
-                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg});
+                            fname = sprintf('%s_FUN_%s_VALIDATION_OBJ%d_VAR%d_MPI%d_RUN%d',...
+                                filestrs{iAlg}, probName{iAlg}{j}, nobjs{iAlg}, dims{iAlg}{j}{n}, nMPI{iAlg}, n);
                     end
                     ffile = sprintf('%s/%s/PF/', mainfils{iAlg}, fnms{iAlg});
                     fname1 = dir([ffile fname]);
-                    tarStr = sprintf('_RUN%d_',n);
-                    tmp_cnt = 0;
-                    for iName = 1:length(fname1)
-                        tmp_fnm = sprintf('%s_', fname1(iName).name);
-                        if contains(tmp_fnm, tarStr)
-                            tmp_cnt = tmp_cnt + 1;
-                            tarName = fname1(iName).name;
-                        end
-                    end
-                    assert(tmp_cnt==1);
                     fprintf('%d ',n);
-                    fname2 = sprintf('%s%s', ffile, tarName);
+                    fname2 = sprintf('%s%s',ffile,fname1.name);
                     tmp   = importdata(fname2);
                     nObj  = size(tmp,2);
                     tmp = [tmp ones(size(tmp,1),1)*n (1:size(tmp,1))'];
