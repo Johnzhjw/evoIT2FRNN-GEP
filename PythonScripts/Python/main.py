@@ -17,6 +17,70 @@ from tqdm import tqdm
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 
+class LRScheduler():
+    """
+    Learning rate scheduler. If the validation loss does not decrease for the
+    given number of `patience` epochs, then the learning rate will decrease by
+    by given `factor`.
+    """
+    def __init__(
+            self, optimizer, patience=5, min_lr=1e-6, factor=0.5
+    ):
+        """
+        new_lr = old_lr * factor
+        :param optimizer: the optimizer we are using
+        :param patience: how many epochs to wait before updating the lr
+        :param min_lr: least lr value to reduce to while updating
+        :param factor: factor by which the lr should be updated
+        """
+        self.optimizer = optimizer
+        self.patience = patience
+        self.min_lr = min_lr
+        self.factor = factor
+        self.lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            self.optimizer,
+            mode='min',
+            patience=self.patience,
+            factor=self.factor,
+            min_lr=self.min_lr,
+            verbose=True
+        )
+    def __call__(self, val_loss):
+        self.lr_scheduler.step(val_loss)
+
+
+class EarlyStopping():
+    """
+    Early stopping to stop the training when the loss does not improve after
+    certain epochs.
+    """
+    def __init__(self, patience=5, min_delta=0):
+        """
+        :param patience: how many epochs to wait before stopping when loss is
+               not improving
+        :param min_delta: minimum difference between new loss and old loss for
+               new loss to be considered as an improvement
+        """
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.best_loss = None
+        self.early_stop = False
+    def __call__(self, val_loss):
+        if self.best_loss == None:
+            self.best_loss = val_loss
+        elif self.best_loss - val_loss > self.min_delta:
+            self.best_loss = val_loss
+            # reset counter if validation loss improves
+            self.counter = 0
+        elif self.best_loss - val_loss < self.min_delta:
+            self.counter += 1
+            print(f"INFO: Early stopping counter {self.counter} of {self.patience}")
+            if self.counter >= self.patience:
+                print('INFO: Early stopping')
+                self.early_stop = True
+
+
 class AverageMeter(object):
     """
     Computes and stores the average and current value
@@ -115,8 +179,8 @@ def get_dataset(file_name='../dataset/Stk.0941.HK.all.csv', train_ratio=2 / 3, c
                               batch_size=trn_batch_size, shuffle=shuffle)
     test_loader = DataLoader(dataset=Mydataset(testx, testy), batch_size=vld_batch_size, shuffle=shuffle)
 
-    return {'tar_min': tar_min, 'tar_max': tar_max, 'tar_mean': tar_mean, 'tar_std': tar_std, 'n_ft': n_ft,
-            'total_len': total_len, 'train_len': train_len, 'sequence': sequence, 'tag_norm': tag_norm,
+    return {'tar_min': float(tar_min), 'tar_max': float(tar_max), 'tar_mean': float(tar_mean), 'tar_std': float(tar_std),
+            'n_ft': n_ft, 'total_len': total_len, 'train_len': train_len, 'sequence': sequence, 'tag_norm': tag_norm,
             'col_name_tar': col_name_tar, 'df': df, 'train_loader': train_loader, 'test_loader': test_loader}
 
 
@@ -197,20 +261,28 @@ class TSA_uni():
 
 class get_model():
 
-    def __init__(self, args, name_model='lstm', lstm_hid_size=10, lr=0.001):
+    def __init__(self, args, name_model='lstm', lstm_hid_size=10, lr=0.001, wd=5e-4, early_stopping=False, patience=5,
+                 lr_scheduler=False, clip_grad=False):
         self.args = args
         self.name_model = name_model
         self.criterion = nn.MSELoss()
         if name_model == 'lstm':
             self.model = lstm(input_size=args['n_ft'], hidden_size=lstm_hid_size)
-            self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
+            self.optimizer = optim.Adam(
+                [{'params': (p for name, p in self.model.named_parameters() if 'bias' not in name)},
+                 {'params': (p for name, p in self.model.named_parameters() if 'bias' in name),
+                  'weight_decay': 0.}], lr=lr, weight_decay=wd)
         elif name_model == 'cnn':
             self.model = CNNNetwork(sequence=args['sequence'], n_ft=args['n_ft'])
-            self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
+            self.optimizer = optim.Adam(
+                [{'params': (p for name, p in self.model.named_parameters() if 'bias' not in name)},
+                 {'params': (p for name, p in self.model.named_parameters() if 'bias' in name),
+                  'weight_decay': 0.}], lr=lr, weight_decay=wd)
         elif 'TSA_uni' in name_model:
             self.TSA_agent = TSA_uni(model_name=name_model,
                                      data=args['df'][args['col_name_tar']][:args['train_len']],
                                      flag_print=False, sequence=args['sequence'], n_ft=args['n_ft'])
+            self.optimizer = None
         else:
             print('Invalid network type')
         if 'TSA_uni' not in name_model and torch.cuda.is_available():
@@ -219,6 +291,13 @@ class get_model():
             cudnn.benchmark = True
         else:
             self.device = torch.device('cpu')
+        self.early_stopping = early_stopping
+        if early_stopping:
+            self.early_stopping_engine = EarlyStopping(patience=patience)
+        self.lr_scheduler = lr_scheduler
+        if lr_scheduler and self.optimizer is not None:
+            self.lr_scheduler_engine = LRScheduler(self.optimizer)
+        self.clip_grad = clip_grad
 
     def train(self, i_run, n_epochs=200, flag_info=False):
         if 'TSA_uni' in self.name_model:
@@ -245,6 +324,8 @@ class get_model():
                         loss = self.criterion(pred, label)
                         self.optimizer.zero_grad()
                         loss.backward()
+                        if self.clip_grad:
+                            nn.utils.clip_grad_norm_(self.model.parameters(), 10)
                         self.optimizer.step()
                         total_loss += loss.item()
 
@@ -259,10 +340,17 @@ class get_model():
                         })
                         t.update(10)
                         end = time.time()
+                if self.lr_scheduler:
+                    self.lr_scheduler_engine(total_loss)
+                if self.early_stopping:
+                    self.early_stopping_engine(total_loss)
+                    if self.early_stopping_engine.early_stop:
+                        break
         else:
             for i in range(n_epochs):
                 if self.name_model == 'cnn':
                     self.model.train()
+                total_loss = 0
                 for idx, (data, label) in enumerate(self.args['train_loader']):
                     data, label = data.to(self.device), label.to(self.device)
                     data1 = data.squeeze(1)
@@ -273,7 +361,16 @@ class get_model():
                     loss = self.criterion(pred, label)
                     self.optimizer.zero_grad()
                     loss.backward()
+                    if self.clip_grad:
+                        nn.utils.clip_grad_norm_(self.model.parameters(), 10)
                     self.optimizer.step()
+                    total_loss += loss.item()
+                if self.lr_scheduler:
+                    self.lr_scheduler_engine(total_loss)
+                if self.early_stopping:
+                    self.early_stopping_engine(total_loss)
+                    if self.early_stopping_engine.early_stop:
+                        break
 
     def test(self):
         # 开始测试
@@ -331,8 +428,10 @@ def main(args):
                                 trn_batch_size=args.trn_batch_size, vld_batch_size=args.vld_batch_size,
                                 shuffle=args.shuffle)
         print('Iter: ', i + 1)
-        engine = get_model(data_args, name_model=args.name_model, lstm_hid_size=args.lstm_hid_size, lr=args.lr)
-        engine.train(i_run=i, n_epochs=args.n_epochs, flag_info=True)
+        engine = get_model(data_args, name_model=args.name_model, lstm_hid_size=args.lstm_hid_size, lr=args.lr,
+                           wd=args.weight_decay, early_stopping=args.early_stopping, patience=args.patience,
+                           lr_scheduler=args.lr_scheduler, clip_grad=args.clip_grad)
+        engine.train(i_run=i, n_epochs=args.n_epochs)
         res_final = engine.test()
         all_res.append(res_final.tolist())
         if 'TSA_uni' not in engine.name_model:
@@ -362,6 +461,7 @@ if __name__ == '__main__':
     parser.add_argument('--tag_norm', type=str, default='min-max', help='Normalization type: none/min-max/Z-score')
     parser.add_argument('--train_ratio', type=float, default=2/3, help='The ratio of train samples')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
+    parser.add_argument('--weight_decay', type=float, default=5e-4, help="weight decay")
     parser.add_argument('--name_model', type=str, default='lstm', help='model name - lstm/cnn/TSA_uni_naive/TSA_uni_avg/TSA_uni_mov_win')
     parser.add_argument('--save', type=str, default='pred', help='location of dir to save')
     parser.add_argument('--str_time', type=str, default=None, help='time string')
@@ -371,6 +471,10 @@ if __name__ == '__main__':
     parser.add_argument('--vld_batch_size', type=int, default=12, help='test batch size for inference')
     parser.add_argument('--n_epochs', type=int, default=200, help='number of epochs for CNN training')
     parser.add_argument('--lstm_hid_size', type=int, default=3, help='hidden size of lstm')
+    parser.add_argument('--early_stopping', action='store_true', default=False, help='whether use early stopping')
+    parser.add_argument('--patience', type=int, default=5, help='patience of early stopping')
+    parser.add_argument('--lr_scheduler', action='store_true', default=False, help='whether use lr_scheduler')
+    parser.add_argument('--clip_grad', action='store_true', default=False, help='whether clip the grad')
     cfgs = parser.parse_args()
     cfgs.str_time = time.strftime("%Y%m%d-%H%M%S")
     cfgs.save = '{}-{}-{}'.format(cfgs.save, cfgs.name_model, cfgs.str_time)

@@ -19,10 +19,10 @@ class ScanFile(object):
             '''
             for special_file in filenames:
                 if self.postfix:
-                    if special_file.endswith(self.postfix): # 判断一个字符的结尾是否是某字符   Python 内置函数 endswith（）
+                    if special_file.endswith(self.postfix):  # 判断一个字符的结尾是否是某字符   Python 内置函数 endswith（）
                         files_list.append(os.path.join(dirpath, special_file))
                 elif self.prefix:
-                    if special_file.startswith(self.prefix): # 判断一个字符的开始是否是某字符   Python 内置函数 endswith（）
+                    if special_file.startswith(self.prefix):  # 判断一个字符的开始是否是某字符   Python 内置函数 endswith（）
                         files_list.append(os.path.join(dirpath, special_file))
                 else:
                     files_list.append(os.path.join(dirpath, special_file))
@@ -48,17 +48,18 @@ def read_from_folders(dir="./"):
             continue
         else:
             tar_fnm = tar_fnm[1]
+        print(subdir, tar_fnm)
         stats = json.load(open(os.path.join(subdir, tar_fnm)))
         stats['alg'] = tar_fnm
         all_results.append(stats)
         print(os.path.join(subdir, tar_fnm))
 
     probs = {}
-    algs  = {}
+    algs = {}
     mat_res = np.zeros((100, 100))
     for res in all_results:
         prob = '.'.join(res['file_name'].split('/')[-1].split('.')[:-1])
-        prb = prob.replace('Stk.','').replace('.all','').replace('.T15','')
+        prb = prob.replace('Stk.', '').replace('.all', '').replace('.T15', '')
         alg = res['alg']
         if res['n_ft'] > 1:
             alg += '-m'
@@ -72,21 +73,15 @@ def read_from_folders(dir="./"):
             algs[alg] = ind_alg
         else:
             ind_alg = algs[alg]
-        mat_res[ind_prb,ind_alg] = np.mean(res['test_err'])
-    mat_res = mat_res[:len(probs),:len(algs)]
+        mat_res[ind_prb, ind_alg] = np.mean(res['test_err'])
+    mat_res = mat_res[:len(probs), :len(algs)]
     print(mat_res)
 
 
 def read_from_logs():
-    log1 = 'out_run1_all.log'
-    log2 = 'out_run1_TS.log'
+    log1 = 'slurm-131022.out'
     all_res = []
     with open(log1, 'r', encoding='utf-8') as f:
-        for line in f:
-            if 'tensor(' in line:
-                val = float(line.split('(')[-1].split(')')[0])
-                all_res.append(val)
-    with open(log2, 'r', encoding='utf-8') as f:
         for line in f:
             if 'tensor(' in line:
                 val = float(line.split('(')[-1].split(')')[0])
@@ -100,8 +95,9 @@ def read_from_logs():
     print(t_res)
     t_arr = np.array(t_res).reshape(-1, 7)
     print(t_arr)
+    np.savetxt('a.csv', t_arr, fmt='%f', delimiter=',')
 
 
 if __name__ == "__main__":
-    read_from_folders()
-    # read_from_logs()
+    # read_from_folders()
+    read_from_logs()
